@@ -1,15 +1,31 @@
+using System;
 using System.Data;
 using System.IO.Pipes;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;
+using NPOI.HPSF;
+using static System.Collections.Specialized.BitVector32;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace TestConsole1_2
+namespace src
 {
     //---- 7/4メモ ----
     //それぞれのクラスの責任があやふやになってきてる。rockedのところとか特に。今一度どのクラスがどこまでの責任を担当して、それが最適なのかという確認、そして見直しを行う
+
+
+    //9/27メモ
+    //いまconsol.writeline(str)としてるところをList<string>.append(str);に置き換えて最後にfor文で回して全部書く。
+    //9/30
+    //じゃなくて、先頭行と最終行のlineを変数としてもっとけば、そこからその範囲内に該当するところを随時描画していけばいい。ただ、何行描画されるか先に知ることがでいないから、どこまでも下に行けてまうんちゃう？
+
+    internal interface IRenderingInConsole
+    {
+        public void StartHandlingKeyEvent();
+        public void StopHandlingKeyEvent();
+    }
 
 
 
@@ -20,6 +36,7 @@ namespace TestConsole1_2
         public int total_lines { get; private set; } = 1;
         private int old_tota_lines = 1;
         private int buffer_len = 0;
+        private int vartical_buffer_len = 0;
         private bool old_write_before;
         private bool clear_stop = false;
         private bool cursol_fixed = false;
@@ -27,10 +44,12 @@ namespace TestConsole1_2
         public List<int> old_chars_in_line { get; set; } = new();
         public List<bool> w_deleted = new();
         private int? top_to_fix = null;
+        StringBuilder page_stringb = new();
         public ConsoleBuffer(int buffer_len = 0)
         {
             this.buffer_len = buffer_len;
         }
+
 
         public void FixCursolTop(int? top)
         {
@@ -96,7 +115,7 @@ namespace TestConsole1_2
                 }
                 Console.SetCursorPosition(0, total_lines - 1);
             }
-        } 
+        }
 
         private void PageDeletePreviousSpace()
         {
@@ -117,6 +136,7 @@ namespace TestConsole1_2
                     Console.Write(sb.ToString());
                 }
             }
+            double a = 1.1e1;
             Console.SetCursorPosition(chars_in_line[total_lines - 1], total_lines - 1);
         }
 
@@ -133,13 +153,14 @@ namespace TestConsole1_2
         //sjis_がbyfferlneを超えないようにするのが目標。今のところの原因の有力候補は、total_lineと、charas_in_lineとのインデックスの関係がうまくいってなくて、そこでなぞに上乗せされて、オーバーしてるのではないか。そこから、>に反応してしまって、どんどん+1の奴が知らんうちにされてるできな。
         public void WriteLineProccess(string str, bool writeline)
         {
-            //繰り返しの記述を避けるためのローカル関数を以下に定義
+            //繰り返しの記述を避けるためのローカル関数を以下に定義.
             void WriteLinePakage()
             {
                 Console.WriteLine("");
                 total_lines++;
                 CharsInLineAddSpace();
             }
+            //end.
 
             int str_sjiscount = 0;
             int previous_i = 0;
@@ -241,47 +262,319 @@ namespace TestConsole1_2
 
 
         //以下、WriteLineの引数型によるオーバーライド
-        public void WriteLine(string args)
+        public void WriteLine<T>(T t)
         {
-            WriteLineProccess(args, true);
-        }
+            WriteLineProccess(t.ToString() ?? "", true);
+            /*
+            if (t.)
+            {
 
-        public void WriteLine(bool args)
-        {
-            WriteLineProccess(args.ToString(), true);
-        }
-
-        public void WriteLine(double args)
-        {
-            WriteLineProccess(args.ToString(), true);
-        }
-
-        public void WriteLine(int args)
-        {
-            WriteLineProccess(args.ToString(), true);
+            }
+            */
         }
 
 
         //以下、Writeの引数型によるオーバーライド
-        public void Write(string args)
+        public void Write<T>(T args)
         {
-            WriteLineProccess(args, false);
+            WriteLineProccess(args.ToString() ?? "", false);
+        }
+    }
+
+    //manage sheet queue and enteier using rendering for console
+    public class RenderingForConsole
+    {
+        private List<Sheet> sheet_q;
+        private Sheet? sheet_to_render;
+
+        public RenderingForConsole()
+        {
+            sheet_q = new List<Sheet>();
+            sheet_to_render = null;
         }
 
-        public void Write(bool args)
+        public void AddSheet(Sheet? arg_sheet = null, int index = -1)
         {
-            WriteLineProccess(args.ToString(), false);
+            if (arg_sheet == null)
+            {
+                arg_sheet = new Sheet();
+            }
+
+            if (index < 0)
+            {
+                sheet_q.Add(arg_sheet);
+            }
+            else
+            {
+                sheet_q.Insert(index, arg_sheet);
+            }
         }
 
-        public void Write(double args)
+        public Sheet GetSheet(int inndex)
         {
-            WriteLineProccess(args.ToString(), false);
+            return sheet_q[inndex];
         }
 
-        public void Write(int args)
+        public void SetSheetToRender(int index)
         {
-            WriteLineProccess(args.ToString(), false);
+            sheet_to_render = sheet_q[index];
         }
+
+        public void RenderingOnConsole()
+        {
+            if (sheet_to_render == null)
+            {
+                return;
+            }
+
+            //スクリーンにまとめあげる
+            //同時に差分を検知する行ごとに
+            foreach (Section section in sheet_to_render.GetSections())
+            {
+                
+            }
+
+            //差分がある行のところだけを描画する.
+            
+        }
+
+    }
+
+    public interface IKeyEventHanler
+    {
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+        const int VK_CONTROL = 0x11;
+        const int VK_S = 0x53;
+        const int VK_ESCAPE = 0x1B;
+        const int VK_UP = 0x26;
+        const int VK_DOWN = 0x28;
+        const int VK_R = 0x27;
+        const int VK_L = 0x25;
+        const int VK_SPACE = 0x0D;
+        const int VK_SHIFT = 0x10;
+        public bool ctrlPressed { get; set; }
+        bool sPressed { get; set; }
+        public bool escPressed { get; set; }
+        public bool up_pressd { get; set; }
+        public bool down_pressd { get; set; }
+        public bool right_pressd { get; set; }
+        public bool left_pressd { get; set; }
+        public bool space_pressd { get; set; }
+        public bool shift_pressed { get; set; }
+
+        public void ReDefine();
+    }
+
+    //本番環境
+    public class KeyEventHandler : IKeyEventHanler
+    {
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+        const int VK_CONTROL = 0x11;
+        const int VK_S = 0x53;
+        const int VK_ESCAPE = 0x1B;
+        const int VK_UP = 0x26;
+        const int VK_DOWN = 0x28;
+        const int VK_R = 0x27;
+        const int VK_L = 0x25;
+        const int VK_SPACE = 0x0D;
+        const int VK_SHIFT = 0x10;
+        public bool ctrlPressed { get; set; } = ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0);
+        public bool sPressed { get; set; } = ((GetAsyncKeyState(VK_S) & 0x8000) != 0);
+        public bool escPressed { get; set; } = ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0);
+        public bool up_pressd { get; set; } = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
+        public bool down_pressd { get; set; } = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
+        public bool right_pressd { get; set; } = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
+        public bool left_pressd { get; set; } = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
+        public bool space_pressd { get; set; } = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
+        public bool shift_pressed { get; set; } = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+
+        public void ReDefine()
+        {
+            up_pressd = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
+            down_pressd = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
+            right_pressd = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
+            left_pressd = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
+            space_pressd = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
+            shift_pressed = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+        }
+    }
+
+    public class SheetQueue
+    {
+
+    }
+
+    public class ElementRenderedOnConsole
+    {
+
+    }
+
+    public class Sheet
+    {
+        public int serial_number { get; set; }
+
+        private List<Section> sections;
+
+        public Sheet()
+        {
+            sections = new List<Section>();
+        }
+
+        public void AddSection(Section? arg_section = null, int index = -1)
+        {
+            if (arg_section == null)
+            {
+                arg_section = new Section();
+            }
+
+            if (index < 0)
+            {
+                sections.Add(arg_section);
+            }
+            else
+            {
+                sections.Insert(index, arg_section);
+            }
+        }
+
+        public Section GetSection(int inndex)
+        {
+            return sections[inndex];
+        }
+
+        public List<Section> GetSections()
+        {
+            return sections;
+        }
+    }
+
+    public class Section
+    {
+        public int serial_number { get; set; }
+        public int line { get; set; }
+        public int line_span { get; set; }
+        public int pos { get; set; }
+        public int pos_span { get; set; }
+
+        private List<SectionLayer> layers;
+
+        public Section()
+        {
+            layers = new List<SectionLayer>();
+        }
+
+        public void AddSection(SectionLayer? arg_layer = null, int index = -1)
+        {
+            if (arg_layer == null)
+            {
+                arg_layer = new SectionLayer();
+            }
+
+            if (index < 0)
+            {
+                layers.Add(arg_layer);
+            }
+            else
+            {
+                layers.Insert(index, arg_layer);
+            }
+        }
+
+        public SectionLayer GetSection(int inndex)
+        {
+            return layers[inndex];
+        }
+    }
+
+    public class SectionQueue
+    {
+        
+    }
+
+    public class SectionLayer
+    {
+        public int serial_number { get; set; }
+        private List<StringBuilder> texts;
+        private int total_line_num = 0;
+        private int current_write_num = 0;
+
+        public SectionLayer()
+        {
+            texts = new List<StringBuilder>();
+        }
+
+        public int GetLenOfTextsList()
+        {
+            return texts.Count;
+        }
+
+        public int GetTotalLineNnum()
+        {
+            return total_line_num;
+        }
+
+        public void Clear()
+        {
+            current_write_num = 0;
+            total_line_num = 0;
+        }
+
+        public void WriteInLine(int line_num = -1)
+        {
+            if (line_num < 0)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+    }
+
+    //if (previous_length > now_rength)
+    //  if (layer(now_layer_num - 1))
+    //      前のレイヤーにあるテキストで短くなった分をうめる
+    //  else
+    //      空白で同じく埋める
+
+
+    //変更有セクション中の変更有レイヤーのテキストのみを描画する。複数ある場合は回す.
+
+    //ではページはどうする？
+    //class Bottun ->
+    //in SetSelected()
+    //if (Bottun.line is out of page limit line)
+    //  make page_y (Bottun.line / page_lien_span (then if % != 0 this += 1))
+    //if (Bottun.pos is out of page pos line)
+    //  make page_x (Bottun.pos / page_pos_span (then if % != 0 this += 1))
+
+    //if 
+
+    //ボタン内にセクションでの行番号と開始位置、スパンを保持させておき、
+    //それを引数として、layer.write(bottun.section_line_num, bottun.section_pos_num + span, ...)みたいにする。
+    //layer(1).fix_pos(bottun.section_pos_num)
+    //layer(1).set_line(bottun.section_line_num)
+    //
+    //以下をまとめて、write_after_select_element_bottun()
+    //layer(1).write()...
+    //layer(1).write()...
+    //
+    //cnosole.Write();
+    //
+    //BottunsAfterSelectElement.RockOn();
+    //
+
+    public class PageQueue
+    {
+
+    }
+
+    public class Page
+    {
+
     }
 
     public class BottunSheetIndexer
@@ -292,10 +585,10 @@ namespace TestConsole1_2
 
         }
 
-        
+
     }
 
-    public class BottunSheet
+    public class BottunSheet : IRenderingInConsole
     {
         public BottunQ BQ { get; set; }
         private Thread t1;
@@ -303,25 +596,28 @@ namespace TestConsole1_2
         public BottunSheet(Action writePage)
         {
             WritePage = writePage;
-            BQ = new BottunQ(WritePage);
+            IKeyEventHanler keyEventHanler = new KeyEventHandler();
+            BQ = new BottunQ(WritePage, keyEventHanler);
             t1 = new Thread(BQ.BottunSelect);
         }
 
-        public void Strat()
+        public void StartHandlingKeyEvent()
         {
             t1.Start();
         }
-
-        public void Stop()
+        public void StopHandlingKeyEvent()
         {
             t1.Join();
         }
+
     }
 
     //ボタンを一つのシート上でキューとして管理。ここでは、ボタンの選択にかかわる処理や、キューに保持しているボタンの要素を変えたりすることができる。
     //キーボード操作はもう一つ独立してクラス作ったら？
+
     public class BottunQ
     {
+        private IKeyEventHanler keyEventHanler;
         private List<List<Bottun>> bottun_queue = new();
         private int bottun_x = 0;
         private int bottun_y = 0;
@@ -335,32 +631,11 @@ namespace TestConsole1_2
 
         private int y_length { get; set; } = 0;
         private int x_length { get; set; } = 0;
-        [DllImport("user32.dll")]
-        private static extern short GetAsyncKeyState(int vKey);
-        private static int a = 0;
 
-        const int VK_CONTROL = 0x11;
-        const int VK_S = 0x53;
-        const int VK_ESCAPE = 0x1B;
-        const int VK_UP = 0x26;
-        const int VK_DOWN = 0x28;
-        const int VK_R = 0x27;
-        const int VK_L = 0x25;
-        const int VK_SPACE = 0x0D;
-        const int VK_SHIFT = 0x10;
-        private bool ctrlPressed = ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0);
-        private bool sPressed = ((GetAsyncKeyState(VK_S) & 0x8000) != 0);
-        private bool escPressed = ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0);
-        private bool up_pressd = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
-        private bool down_pressd = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
-        private bool right_pressd = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
-        private bool left_pressd = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
-        private bool space_pressd = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
-        private bool shift_pressed = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
-
-        public BottunQ(Action writePage)
+        public BottunQ(Action writePage, IKeyEventHanler keyEventHanler)
         {
             WritePage = writePage;
+            this.keyEventHanler = keyEventHanler;
         }
 
         public void AddNewBottun(int y = -1, int x = -1, bool apeal = true, string rabel = "bottun", Action? function = null)
@@ -392,7 +667,7 @@ namespace TestConsole1_2
             }
         }
 
-        public void AddNewList(int size_of_list,int y = -1, bool apeal = true, string rabel = "bottun", Action? function = null)
+        public void AddNewList(int size_of_list, int y = -1, bool apeal = true, string rabel = "bottun", Action? function = null)
         {
             if (y < 0)
             {
@@ -452,7 +727,7 @@ namespace TestConsole1_2
 
         public void SetRabel(int y, int x, string rabel)
         {
-            if ( ((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)) )
+            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
             {
                 bottun_queue[y][x].rabel = rabel;
             }
@@ -532,22 +807,11 @@ namespace TestConsole1_2
             return bottun_queue[y].Count;
         }
 
-        public void ReDefine()
-        {
-            up_pressd = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
-            down_pressd = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
-            right_pressd = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
-            left_pressd = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
-            space_pressd = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
-            shift_pressed = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
-        }
-
         public void Wait()
         {
-            while (up_pressd | down_pressd | right_pressd | left_pressd | space_pressd)
+            while (keyEventHanler.up_pressd | keyEventHanler.down_pressd | keyEventHanler.right_pressd | keyEventHanler.left_pressd | keyEventHanler.space_pressd)
             {
-                ReDefine();
-                Thread.Sleep(0);
+                Thread.Sleep(1);
             }
         }
 
@@ -570,8 +834,7 @@ namespace TestConsole1_2
         {
             while (!rocked)
             {
-                ReDefine();
-                if (up_pressd && (0 < bottun_y) && !some_on_rocked)
+                if (keyEventHanler.up_pressd && (0 < bottun_y) && !some_on_rocked)
                 {
                     XYGetOld();
                     if (bottun_x > bottun_queue[bottun_y - 1].Count - 1)
@@ -583,7 +846,7 @@ namespace TestConsole1_2
                     WritePage();
                     Wait();
                 }
-                else if (down_pressd && (bottun_y < bottun_queue.Count - 1) && !some_on_rocked)
+                else if (keyEventHanler.down_pressd && (bottun_y < bottun_queue.Count - 1) && !some_on_rocked)
                 {
                     XYGetOld();
                     if (bottun_x > bottun_queue[bottun_y + 1].Count - 1)
@@ -595,7 +858,7 @@ namespace TestConsole1_2
                     WritePage();
                     Wait();
                 }
-                else if (right_pressd && (bottun_x < bottun_queue[bottun_y].Count - 1) && !some_on_rocked)
+                else if (keyEventHanler.right_pressd && (bottun_x < bottun_queue[bottun_y].Count - 1) && !some_on_rocked)
                 {
                     XYGetOld();
                     bottun_x++;
@@ -603,7 +866,7 @@ namespace TestConsole1_2
                     WritePage();
                     Wait();
                 }
-                else if (left_pressd && (0 < bottun_x) && !some_on_rocked)
+                else if (keyEventHanler.left_pressd && (0 < bottun_x) && !some_on_rocked)
                 {
                     XYGetOld();
                     bottun_x--;
@@ -611,7 +874,7 @@ namespace TestConsole1_2
                     WritePage();
                     Wait();
                 }
-                else if (space_pressd && !some_on_rocked)
+                else if (keyEventHanler.space_pressd && !some_on_rocked)
                 {
                     try
                     {
@@ -627,7 +890,7 @@ namespace TestConsole1_2
                     }
                     Wait();
                 }
-                else if (shift_pressed && space_pressd && some_on_rocked && !dont_release)
+                else if (keyEventHanler.shift_pressed && keyEventHanler.space_pressd && some_on_rocked && !dont_release)
                 {
                     try
                     {
@@ -664,7 +927,7 @@ namespace TestConsole1_2
     }
     public class Bottun
     {
-        public int? console_top { get; set; } = null; 
+        public int? console_top { get; set; } = null;
 
         public int x { get; set; }
 
@@ -673,7 +936,7 @@ namespace TestConsole1_2
         public bool on { get; set; } = false;
 
         public bool selsected { get; set; } = false;
-        public bool apear { get; set; }  = true;
+        public bool apear { get; set; } = true;
 
         public Action? Function { get; set; }
         public Bottun(int y, int x, string rabel = "bottun", bool apear = true)
@@ -696,7 +959,7 @@ namespace TestConsole1_2
                 Function();
             }
         }
-        
+
         public string Rabel()
         {
             if (apear)
@@ -737,7 +1000,7 @@ namespace TestConsole1_2
             {
                 text_strage.Add(new StringBuilder());
             }
-            
+
         }
 
         private void WriteBorder()
@@ -771,7 +1034,7 @@ namespace TestConsole1_2
             }
             WriteBorder();
         }
-        
+
         public void AddText(string str)
         {
             for (int i = 0; i < height - 1; i++)
@@ -780,15 +1043,23 @@ namespace TestConsole1_2
                 text_strage[i].Append(text_strage[i + 1].ToString());
             }
             text_strage[height - 1].Clear();
-            text_strage[height - 1].Append(DateTime.Now.ToString("T") +" " + str);
+            text_strage[height - 1].Append(DateTime.Now.ToString("T") + " " + str);
         }
     }
-    public class Program
+
+    public class Program2
     {
         private static ConsoleBuffer consoleBuffer = new();
         private BottunSheet? BS;
         private int a = 0;
         private AnnouncementBox announcementBox = new(4, consoleBuffer);
+
+        public void Process()
+        {
+            RenderingForConsole renderingForConsole = new();
+            
+        }
+
         public void Write()
         {
             //Console.Clear();
@@ -798,7 +1069,7 @@ namespace TestConsole1_2
             if (BS != null)
             {
                 consoleBuffer.Clear();
-                
+
                 for (int i = 0; i < BS.BQ.Y_length(); i++)
                 {
                     string str_to_write = "";
@@ -824,10 +1095,10 @@ namespace TestConsole1_2
                 }
                 announcementBox.WriteLine();
                 consoleBuffer.Write("test");
-                
+
                 consoleBuffer.ClearStop();
                 consoleBuffer.WriteLine("(" + Console.GetCursorPosition().Left.ToString() + Console.GetCursorPosition().Top.ToString() + ")");
-                
+
                 //consoleBuffer.WriteLine("bbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbb");
                 if (a == 1 | a % 2 == 0)
                 {
@@ -848,7 +1119,7 @@ namespace TestConsole1_2
                 //consoleBuffer.WriteLine("hahaha");
                 a++;
             }
-           
+
         }
 
         public void Hoge()
@@ -872,7 +1143,7 @@ namespace TestConsole1_2
             BS.BQ.AddNewList(3, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(4, function: actiona, rabel: to_rabel);
-            
+
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
@@ -890,21 +1161,12 @@ namespace TestConsole1_2
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             */
-            BS.Strat();
+            BS.StartHandlingKeyEvent();
             //var t1 = new Thread(BQ.Some);
             //t1.Start();
             //Console.WriteLine("hello world");
-        }
-    }
 
-
-    public class Hoge
-    {
-        static void Main(string[] args)
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            var pg = new Program();
-            pg.Excute();
         }
     }
 }
+
