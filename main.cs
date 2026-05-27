@@ -7,6 +7,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;
 using NPOI.HPSF;
+using NPOI.SS.Util;
+using Array = System.Array;
+using Org.BouncyCastle.Bcpg.Sig;
 using static System.Collections.Specialized.BitVector32;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -21,11 +24,9 @@ namespace src
     //9/30
     //じゃなくて、先頭行と最終行のlineを変数としてもっとけば、そこからその範囲内に該当するところを随時描画していけばいい。ただ、何行描画されるか先に知ることがでいないから、どこまでも下に行けてまうんちゃう？
 
-    internal interface IRenderingInConsole
-    {
-        public void StartHandlingKeyEvent();
-        public void StopHandlingKeyEvent();
-    }
+    //
+    //
+
 
 
 
@@ -281,8 +282,288 @@ namespace src
         }
     }
 
+    internal class CSharpConsoleTUI
+    {
+        private RenderingForConsole renderingForConsole;
+        private KeyEventHandler keyEventHandler;
+        private IKeyEvent keyEvent;
+
+        public CSharpConsoleTUI()
+        {
+            keyEvent = new KeyEvent();
+            renderingForConsole = new();
+            keyEventHandler = new(4, keyEvent);
+        }
+    }
+
+    public interface IKeyEvent
+    {
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+        const int VK_CONTROL = 0x11;
+        const int VK_S = 0x53;
+        const int VK_ESCAPE = 0x1B;
+        const int VK_UP = 0x26;
+        const int VK_DOWN = 0x28;
+        const int VK_R = 0x27;
+        const int VK_L = 0x25;
+        const int VK_SPACE = 0x0D;
+        const int VK_SHIFT = 0x10;
+        public bool ctrlPressed { get; set; }
+        bool sPressed { get; set; }
+        public bool escPressed { get; set; }
+        public bool up_pressd { get; set; }
+        public bool down_pressd { get; set; }
+        public bool right_pressd { get; set; }
+        public bool left_pressd { get; set; }
+        public bool space_pressd { get; set; }
+        public bool shift_pressed { get; set; }
+
+        public void ReDefine();
+    }
+
+    //本番環境
+    public class KeyEvent : IKeyEvent
+    {
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+        const int VK_CONTROL = 0x11;
+        const int VK_S = 0x53;
+        const int VK_ESCAPE = 0x1B;
+        const int VK_UP = 0x26;
+        const int VK_DOWN = 0x28;
+        const int VK_R = 0x27;
+        const int VK_L = 0x25;
+        const int VK_SPACE = 0x0D;
+        const int VK_SHIFT = 0x10;
+        public bool ctrlPressed { get; set; } = ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0);
+        public bool sPressed { get; set; } = ((GetAsyncKeyState(VK_S) & 0x8000) != 0);
+        public bool escPressed { get; set; } = ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0);
+        public bool up_pressd { get; set; } = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
+        public bool down_pressd { get; set; } = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
+        public bool right_pressd { get; set; } = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
+        public bool left_pressd { get; set; } = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
+        public bool space_pressd { get; set; } = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
+        public bool shift_pressed { get; set; } = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+
+        public void ReDefine()
+        {
+            up_pressd = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
+            down_pressd = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
+            right_pressd = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
+            left_pressd = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
+            space_pressd = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
+            shift_pressed = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+        }
+    }
+
+    internal class KeyEventHandlerElement
+    {
+        protected const int number_of_available_key = 16;
+    }
+
+    internal enum KeyToIndex
+    {
+        Up = 0,
+        Down = 1,
+        Left = 2,
+        Right = 3,
+        Shift = 4,
+        Enter = 5,
+        W = 6,
+        S = 7,
+        A = 8,
+        D = 9,
+        Shift_W = 10,
+        Shift_S = 11,
+        Shift_A = 12,
+        Shift_D = 13,
+        Shift_Q = 14,
+        Shift_E = 15
+    }
+
+    internal class KeyEventHandlerOneThread : KeyEventHandlerElement
+    {
+
+        private List<Action>[] actions = new List<Action>[number_of_available_key];
+        private IKeyEvent keyEvent;
+        private Thread thread;
+        public KeyEventHandlerOneThread(IKeyEvent keyEvent)
+        {
+            this.keyEvent = keyEvent;
+            thread = new Thread(this.KeyEventHandl);
+        }
+
+        public void SetOneKeyAction(int index, List<Action> arg_actions)
+        {
+            actions[index] = arg_actions;
+        }
+
+        public void ExecuteActions(KeyToIndex keyToIndex)
+        {
+            foreach (Action action in actions[(int)keyToIndex])
+            {
+                action();
+            }
+        }
+
+        public void KeyEventHandl()
+        {
+            while (true)
+            {
+                if (keyEvent.up_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Up);
+                }
+                if (keyEvent.down_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Down);
+                }
+                if (keyEvent.right_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Right);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Left);
+                }
+
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.W);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.S);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.D);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.A);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Shift_W);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Shift_S);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Shift_D);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Shift_A);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Shift_Q);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Shift_E);
+                }
+                if (keyEvent.left_pressd)
+                {
+                    ExecuteActions(KeyToIndex.Enter);
+                }
+            }
+        }
+
+        public void Clear()
+        {
+            Array.Clear(actions, 0, actions.Length);
+        }
+
+        public void Start()
+        {
+            thread.Start();
+        }
+
+        public void Stop()
+        {
+            thread.Join();
+        }
+    }
+
+    internal class KeyEventHandler : KeyEventHandlerElement
+    {
+        private List<KeyEventHandlerOneThread> thread_list = new();
+        private int[] is_already_added_action = new int[number_of_available_key];
+        private int mux_index_of_thread = 0;
+        private int max_thread_num = 0;
+        private IKeyEvent keyEvent;
+        public KeyEventHandler(int max_thread_num, IKeyEvent keyEvent)
+        {
+            this.max_thread_num = max_thread_num;
+            this.keyEvent = keyEvent;
+        }
+
+        public void AddThread()
+        {
+            var t = new KeyEventHandlerOneThread(keyEvent);
+            thread_list.Add(t);
+        }
+
+        public void AddAction(int thread_index, KeyToIndex key_to_index, params Action[] actions)
+        {
+            var list = new List<Action>(actions);
+            thread_list[thread_index].SetOneKeyAction((int)key_to_index, list);
+        }
+
+        public void ActionClear(int? thread_index = null)
+        {
+            if (thread_index == null)
+            {
+                foreach (var item in thread_list)
+                {
+                    item.Clear();
+                }
+                return;
+            }
+            thread_list[(int)thread_index].Clear();
+        }
+
+        public void StartAll()
+        {
+            foreach (var key_thread in thread_list)
+            {
+                key_thread.Start();
+            }
+        }
+
+        public void StopAll()
+        {
+            foreach (var key_thread in thread_list)
+            {
+                key_thread.Stop();
+            }
+        }
+
+        public void Start(params int[] thread_indexs)
+        {
+            foreach (int i in thread_indexs)
+            {
+                thread_list[i].Start();
+            }
+        }
+
+        public void Stop(params int[] thread_indexs)
+        {
+            foreach (int i in thread_indexs)
+            {
+                thread_list[i].Stop();
+            }
+        }
+    }
+
     //manage sheet queue and enteier using rendering for console
-    public class RenderingForConsole
+    internal class RenderingForConsole
     {
         private List<Sheet> sheet_q;
         private Sheet? sheet_to_render;
@@ -327,12 +608,26 @@ namespace src
                 return;
             }
 
+            var sections_in_line = sheet_to_render.GetSectionsInLine();
+            foreach ( List<SectionInfoInLine> line in sections_in_line)
+            {
+                bool all_is_dont_changed = false;
+                /*
+                foreach (SectionInfoInLine sectionInfo in line)
+                {
+                    //sectionでchangedかどうか千さする
+                    Section section = sheet_to_render.GetSection(sectionInfo.section_serial_num);
+                }
+                */
+                foreach (SectionInfoInLine sectionInfo in line)
+                {
+                    Section section = sheet_to_render.GetSection(sectionInfo.section_serial_num);
+                }
+            }
+
             //スクリーンにまとめあげる
             //同時に差分を検知する行ごとに
-            foreach (Section section in sheet_to_render.GetSections())
-            {
-                
-            }
+            
 
             //差分がある行のところだけを描画する.
             
@@ -340,86 +635,65 @@ namespace src
 
     }
 
-    public interface IKeyEventHanler
+    internal class SectionInfoInLine
     {
-        [DllImport("user32.dll")]
-        private static extern short GetAsyncKeyState(int vKey);
-        const int VK_CONTROL = 0x11;
-        const int VK_S = 0x53;
-        const int VK_ESCAPE = 0x1B;
-        const int VK_UP = 0x26;
-        const int VK_DOWN = 0x28;
-        const int VK_R = 0x27;
-        const int VK_L = 0x25;
-        const int VK_SPACE = 0x0D;
-        const int VK_SHIFT = 0x10;
-        public bool ctrlPressed { get; set; }
-        bool sPressed { get; set; }
-        public bool escPressed { get; set; }
-        public bool up_pressd { get; set; }
-        public bool down_pressd { get; set; }
-        public bool right_pressd { get; set; }
-        public bool left_pressd { get; set; }
-        public bool space_pressd { get; set; }
-        public bool shift_pressed { get; set; }
-
-        public void ReDefine();
-    }
-
-    //本番環境
-    public class KeyEventHandler : IKeyEventHanler
-    {
-        [DllImport("user32.dll")]
-        private static extern short GetAsyncKeyState(int vKey);
-        const int VK_CONTROL = 0x11;
-        const int VK_S = 0x53;
-        const int VK_ESCAPE = 0x1B;
-        const int VK_UP = 0x26;
-        const int VK_DOWN = 0x28;
-        const int VK_R = 0x27;
-        const int VK_L = 0x25;
-        const int VK_SPACE = 0x0D;
-        const int VK_SHIFT = 0x10;
-        public bool ctrlPressed { get; set; } = ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0);
-        public bool sPressed { get; set; } = ((GetAsyncKeyState(VK_S) & 0x8000) != 0);
-        public bool escPressed { get; set; } = ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0);
-        public bool up_pressd { get; set; } = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
-        public bool down_pressd { get; set; } = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
-        public bool right_pressd { get; set; } = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
-        public bool left_pressd { get; set; } = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
-        public bool space_pressd { get; set; } = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
-        public bool shift_pressed { get; set; } = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
-
-        public void ReDefine()
+        public SectionInfoInLine(int section_serial_num, int line_serial)
         {
-            up_pressd = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
-            down_pressd = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
-            right_pressd = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
-            left_pressd = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
-            space_pressd = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
-            shift_pressed = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+            this.section_serial_num = section_serial_num;
+            this.line_serial = line_serial;
         }
+        public int section_serial_num;
+        public int line_serial;
     }
 
-    public class SheetQueue
+    internal class Sheet
     {
+        private class SectionSerialNumberAndXpos
+        {
+            public SectionSerialNumberAndXpos(int serial_num, int x_pos)
+            {
+                this.serial_num = serial_num;
+                this.xpos = x_pos;
+            }
+            public int serial_num;
+            public int xpos;
+        }
 
-    }
-
-    public class ElementRenderedOnConsole
-    {
-
-    }
-
-    public class Sheet
-    {
         public int serial_number { get; set; }
-
         private List<Section> sections;
+        private List<List<SectionInfoInLine>> applicable_sections_in_line;
+        private List<int> section_serial_number_s = new();
+        private List<int> section_x_pos_list = new();
+        private List<SectionSerialNumberAndXpos> serial_and_xpos = new();
 
         public Sheet()
         {
             sections = new List<Section>();
+        }
+
+        void XposSort()
+        {
+            int n = serial_and_xpos.Count;
+
+            for (int i = 1; i < n; i++)
+            {
+                var temp = serial_and_xpos[i];
+                int j = i - 1;
+
+                while (j >= 0 &&
+                       serial_and_xpos[j].xpos > temp.xpos)
+                {
+                    serial_and_xpos[j + 1] = serial_and_xpos[j];
+                    j--;
+                }
+
+                serial_and_xpos[j + 1] = temp;
+            }
+        }
+
+        public List<List<SectionInfoInLine>> GetSectionsInLine()
+        {
+            return applicable_sections_in_line;
         }
 
         public void AddSection(Section? arg_section = null, int index = -1)
@@ -437,6 +711,29 @@ namespace src
             {
                 sections.Insert(index, arg_section);
             }
+
+            serial_and_xpos.Add(new SectionSerialNumberAndXpos(sections[sections.Count - 1].serial_number, sections[sections.Count - 1].X_pos));
+            ResetSectionsInfoInLine();
+        }
+
+        private void ResetSectionsInfoInLine()
+        {
+            XposSort();
+
+            foreach (var list in applicable_sections_in_line)
+            {
+                list.Clear();
+            }
+
+            foreach (var each in serial_and_xpos)
+            {
+                int serial_num = each.serial_num;
+                for (int i = sections[serial_num].Y_pos, line_serial = 0; i < applicable_sections_in_line.Count; i++)
+                {
+                    applicable_sections_in_line[i].Add(new SectionInfoInLine(serial_num, line_serial)); 
+                    line_serial++;
+                }
+            }
         }
 
         public Section GetSection(int inndex)
@@ -453,10 +750,12 @@ namespace src
     public class Section
     {
         public int serial_number { get; set; }
-        public int line { get; set; }
-        public int line_span { get; set; }
-        public int pos { get; set; }
-        public int pos_span { get; set; }
+        public int X_pos { get; set; }
+        public int X_span { get; set; }
+        public int Y_pos { get; set; }
+        public int Y_span { get; set; }
+
+        public int PageStartingLine { get; set; }
 
         private List<SectionLayer> layers;
 
@@ -488,17 +787,17 @@ namespace src
         }
     }
 
-    public class SectionQueue
-    {
-        
-    }
-
     public class SectionLayer
     {
         public int serial_number { get; set; }
         private List<StringBuilder> texts;
         private int total_line_num = 0;
-        private int current_write_num = 0;
+        private int current_x = 0;
+        private int current_y = 0;
+        private bool is_fix_current_x = false;
+        private bool is_with_clear = false;
+
+        public bool IsCleadCurrently { get; set; } = true;
 
         public SectionLayer()
         {
@@ -517,20 +816,56 @@ namespace src
 
         public void Clear()
         {
-            current_write_num = 0;
-            total_line_num = 0;
+            IsCleadCurrently = true;
+            current_y = 0;
+            foreach (var text in texts)
+            {
+                text.Clear();
+            }
         }
 
-        public void WriteInLine(int line_num = -1)
+        public void SetCursolPos(int x, int y)
         {
-            if (line_num < 0)
-            {
+            current_y = y;
+            current_x = x;
+        }
 
-            }
-            else
-            {
+        public void FixX()
+        {
+            is_fix_current_x = true;
+        }
 
+        public void Write(string str)
+        {
+            if (str.Length != 0)
+            {
+                IsCleadCurrently = false;
             }
+
+            if (current_y > total_line_num)
+            {
+                texts.Add(new StringBuilder());
+                total_line_num++;
+            }
+
+            int lenght = texts[current_y].Length;
+            if (current_x != 0 && lenght > current_x)
+            {
+                texts[current_y].Remove(current_x, lenght - current_x);
+            }
+
+            if (lenght < current_x)
+            {
+                texts[current_y].Append(' ', current_x -  lenght);
+            }
+
+            texts[current_y].Append(str);
+        }
+
+        public void WriteLine(string str)
+        {
+            Write(str);
+            current_y++;
         }
     }
 
@@ -567,6 +902,93 @@ namespace src
     //BottunsAfterSelectElement.RockOn();
     //
 
+    //start
+    //
+    //console.StartKeyHanle();
+    //console.UseThreadTo(console);
+    //
+    //in console
+    //if (up_pressed)
+    //x++;
+    //if (enter_pressed)
+    //console.UseThreadTo(current_sheet);
+    //
+    //in sheet
+    //if (enter_pressed)
+    //console.UseThreadTo(current_section);
+    //
+    //
+
+    //public main_memu
+
+    //public void ReWriteToMemuSection()
+    //  Section to_menu_section = tounament_sheet.Section(0);
+    //  to_memu_section.Layer(0).Write(to_memu_bottun, line_num : 0, how_many_space_between_buttons : 4);
+
+    //public void ReWriteInputSection()
+
+    //public ReWriteAll()
+    //  ReWriteToMemuSection();
+    //  ReWriteToInputSection();
+
+    //
+    //KeyEvent key_evnet = new KeyEvent(max_thread : 3);
+
+    //key_event.ClearAction();
+    //key_event.SetAction("W", to_menu.Up(key_event), ReWrite())
+    //key_event.SetAction("S", ...)
+    //key_event.SetAction("Shift", "W", to_menu.Up())
+
+    //Sheet tounament_sheet = new();
+    //tounament_sheet.AddSection(times : 3)
+    //to_memu_buttuns.AddButtun("戻る", Action action = Finish()).AddButtun("説明", )
+    //to_memu_buttuns.WriteWhenSelected(ReWriteInputSection)
+    //tounament_buttuns.AddButtun("＋", Action action = AddFunction()), Action action = WriteMainInput())
+    //for (int i ...)
+    //  add_person_buttns.AddBtn(dic[i], Action action = AddProcess())
+    //ReWriteAll();
+
+    //public WriteMainInput()
+
+    //public void AddFunction()
+    //  WriteAddFunction();
+    //  add_person_btns.RockOn();
+
+    //public void WriteAddFunction()
+    //  input_section.Layer(1).SetStartPointOfCursol(input_buttun_write.Selected());
+    //  input_section.Layer(1).RockStartXOfcursol(input_button_weite.Selecter());
+    //
+    //  for (int i...)
+    //      layer.Write(add_person_buttun);
+
+    //public void WriteToThisPerson()
+    //  input_section.Layer(1).SetStartPointOfCursol(input_buttun_write.Selected());
+    //  input_section.Layer(1).RockStartXOfcursol(input_button_weite.Selecter());
+    //
+    //  Layer layer = input_section.Layer(1);
+    //  layer.Clear();
+    //  layer.WeiteLine("-", 8)
+    //  layer.WriteLine("| ", tothis_person_buttns.btn(0, 0), " |");
+    //  layer.WriteLine("| ", tothis_person_buttns.btn(0, 1), " |");
+    //  layer.WeiteLine("-", 8)
+    //
+
+    //public void AddProcess()
+    //  added_person_list[dic(rabel)] = true
+    //  person_btns.AddBtns(rabel, PersonDeletMenu(), WriteMainFunction);
+    //  person_btns.AddBtns("+", AddEventInPerson());
+
+    //public void AddEventInPerson()
+    //  WriteAddEventInPerson();
+    //  event_btns.RockOn();
+
+    //public AddEventProcess()
+    //  person_btns[index].AddBtns(rabel, EventDeletOrChange(), )
+
+    //public void ToThisPerson()
+    //  WriteToThisPerson();
+    //  tothis_person_btn.RockOn();
+
     public class PageQueue
     {
 
@@ -588,7 +1010,8 @@ namespace src
 
     }
 
-    public class BottunSheet : IRenderingInConsole
+    //
+    public class BottunSheet
     {
         public BottunQ BQ { get; set; }
         private Thread t1;
@@ -596,8 +1019,8 @@ namespace src
         public BottunSheet(Action writePage)
         {
             WritePage = writePage;
-            IKeyEventHanler keyEventHanler = new KeyEventHandler();
-            BQ = new BottunQ(WritePage, keyEventHanler);
+            IKeyEvent keyEventHandler = new KeyEvent();
+            BQ = new BottunQ(WritePage, keyEventHandler);
             t1 = new Thread(BQ.BottunSelect);
         }
 
@@ -610,6 +1033,11 @@ namespace src
             t1.Join();
         }
 
+        public void MainInKeyEvent()
+        {
+
+        }
+
     }
 
     //ボタンを一つのシート上でキューとして管理。ここでは、ボタンの選択にかかわる処理や、キューに保持しているボタンの要素を変えたりすることができる。
@@ -617,7 +1045,7 @@ namespace src
 
     public class BottunQ
     {
-        private IKeyEventHanler keyEventHanler;
+        private IKeyEvent keyEventHanler;
         private List<List<Bottun>> bottun_queue = new();
         private int bottun_x = 0;
         private int bottun_y = 0;
@@ -632,10 +1060,20 @@ namespace src
         private int y_length { get; set; } = 0;
         private int x_length { get; set; } = 0;
 
-        public BottunQ(Action writePage, IKeyEventHanler keyEventHanler)
+        public BottunQ(Action writePage, IKeyEvent keyEventHanler)
         {
             WritePage = writePage;
             this.keyEventHanler = keyEventHanler;
+        }
+
+        public void BeLocked()
+        {
+            rocked = true;
+        }
+
+        public void BeUnlocked()
+        {
+            rocked = false;
         }
 
         public void AddNewBottun(int y = -1, int x = -1, bool apeal = true, string rabel = "bottun", Action? function = null)
@@ -815,6 +1253,157 @@ namespace src
             }
         }
 
+        public void UpProcess()
+        {
+            if (rocked)
+                return;
+
+            if (!((0 < bottun_y) && !some_on_rocked))
+                return;
+
+            XYGetOld();
+            if (bottun_x > bottun_queue[bottun_y - 1].Count - 1)
+            {
+                bottun_x = bottun_queue[bottun_y - 1].Count - 1;
+            }
+            bottun_y--;
+            ChangeSelected();
+            WritePage();
+        }
+
+        public void DownProcess()
+        {
+            if (rocked)
+                return;
+
+            if (!((bottun_y < bottun_queue.Count - 1) && !some_on_rocked))
+                return;
+
+            XYGetOld();
+            if (bottun_x > bottun_queue[bottun_y + 1].Count - 1)
+            {
+                bottun_x = bottun_queue[bottun_y + 1].Count - 1;
+            }
+            bottun_y++;
+            ChangeSelected();
+            WritePage();
+        }
+
+        public void LeftSlideProcess()
+        {
+            if (rocked)
+                return;
+
+            if (!((0 < bottun_x) && !some_on_rocked))
+                return;
+
+            XYGetOld();
+            bottun_x--;
+            ChangeSelected();
+            WritePage();
+        }
+
+        public void RightSlideProcess()
+        {
+            if (rocked)
+                return;
+
+            if (!((bottun_x < bottun_queue[bottun_y].Count - 1) && !some_on_rocked))
+                return;
+
+            XYGetOld();
+            bottun_x++;
+            ChangeSelected();
+            WritePage();
+        }
+
+        public void UpSelected()
+        {
+            UpProcess();
+            Wait();
+        }
+
+        public void DownSelected()
+        {
+            DownProcess();
+            Wait();
+        }
+
+        public void LeftSlideSelected()
+        {
+            LeftSlideProcess();
+            Wait();
+        }
+
+        public void RightSlideSelected()
+        {
+            RightSlideProcess();
+            Wait();
+        }
+
+        public void FastUpSelected()
+        {
+            UpProcess();
+            Thread.Sleep(500);
+        }
+
+        public void FastDownSelected()
+        {
+            DownProcess();
+            Thread.Sleep(500);
+        }
+
+        public void FastLeftSlideSelected()
+        {
+            LeftSlideProcess();
+            Thread.Sleep(500);
+        }
+
+        public void FastRightSlideSelected()
+        {
+            RightSlideProcess();
+            Thread.Sleep(500);
+        }
+
+        public void TurnOnToKeyEvent()
+        {
+            if (!some_on_rocked)
+            {
+                try
+                {
+                    bottun_queue[bottun_y][bottun_x].on = true;
+                    WritePage();
+                    bottun_queue[bottun_y][bottun_x].FunctionExcute();
+                    some_on_rocked = true;
+                }
+                catch (IndexOutOfRangeException ex)
+                {
+                    WritePage();
+                    Console.WriteLine(ex.Message);
+                }
+                Wait();
+            }
+        }
+
+        public void TurnOffToKeyEvent()
+        {
+            if (some_on_rocked && !dont_release)
+            {
+                try
+                {
+                    bottun_queue[bottun_y][bottun_x].on = false;
+                    ChangeSelected();
+                    some_on_rocked = false;
+                }
+                catch (IndexOutOfRangeException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                WritePage();
+                Wait();
+            }
+        }
+
         public void ChangeSelected()
         {
             bottun_queue[old_y][old_x].selsected = false;
@@ -828,85 +1417,6 @@ namespace src
         {
             old_x = bottun_x;
             old_y = bottun_y;
-        }
-
-        public void BottunSelect()
-        {
-            while (!rocked)
-            {
-                if (keyEventHanler.up_pressd && (0 < bottun_y) && !some_on_rocked)
-                {
-                    XYGetOld();
-                    if (bottun_x > bottun_queue[bottun_y - 1].Count - 1)
-                    {
-                        bottun_x = bottun_queue[bottun_y - 1].Count - 1;
-                    }
-                    bottun_y--;
-                    ChangeSelected();
-                    WritePage();
-                    Wait();
-                }
-                else if (keyEventHanler.down_pressd && (bottun_y < bottun_queue.Count - 1) && !some_on_rocked)
-                {
-                    XYGetOld();
-                    if (bottun_x > bottun_queue[bottun_y + 1].Count - 1)
-                    {
-                        bottun_x = bottun_queue[bottun_y + 1].Count - 1;
-                    }
-                    bottun_y++;
-                    ChangeSelected();
-                    WritePage();
-                    Wait();
-                }
-                else if (keyEventHanler.right_pressd && (bottun_x < bottun_queue[bottun_y].Count - 1) && !some_on_rocked)
-                {
-                    XYGetOld();
-                    bottun_x++;
-                    ChangeSelected();
-                    WritePage();
-                    Wait();
-                }
-                else if (keyEventHanler.left_pressd && (0 < bottun_x) && !some_on_rocked)
-                {
-                    XYGetOld();
-                    bottun_x--;
-                    ChangeSelected();
-                    WritePage();
-                    Wait();
-                }
-                else if (keyEventHanler.space_pressd && !some_on_rocked)
-                {
-                    try
-                    {
-                        bottun_queue[bottun_y][bottun_x].on = true;
-                        WritePage();
-                        bottun_queue[bottun_y][bottun_x].FunctionExcute();
-                        some_on_rocked = true;
-                    }
-                    catch (IndexOutOfRangeException ex)
-                    {
-                        WritePage();
-                        Console.WriteLine(ex.Message);
-                    }
-                    Wait();
-                }
-                else if (keyEventHanler.shift_pressed && keyEventHanler.space_pressd && some_on_rocked && !dont_release)
-                {
-                    try
-                    {
-                        bottun_queue[bottun_y][bottun_x].on = false;
-                        ChangeSelected();
-                        some_on_rocked = false;
-                    }
-                    catch (IndexOutOfRangeException ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    WritePage();
-                    Wait();
-                }
-                Thread.Sleep(10); // CPU負荷軽減のために少しスリープ
-            }
         }
 
         public void TurnOff()
@@ -923,6 +1433,14 @@ namespace src
             }
             WritePage();
             Wait();
+        }
+
+        public void BottunSelect()
+        {
+            while (!rocked)
+            {
+                Thread.Sleep(10); // CPU負荷軽減のために少しスリープ
+            }
         }
     }
     public class Bottun
@@ -1047,6 +1565,16 @@ namespace src
         }
     }
 
+    public class KeyEvnetSheet
+    {
+        public KeyEvnetSheet()
+        {
+
+        }
+
+
+    }
+
     public class Program2
     {
         private static ConsoleBuffer consoleBuffer = new();
@@ -1100,7 +1628,7 @@ namespace src
                 consoleBuffer.WriteLine("(" + Console.GetCursorPosition().Left.ToString() + Console.GetCursorPosition().Top.ToString() + ")");
 
                 //consoleBuffer.WriteLine("bbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbb");
-                if (a == 1 | a % 2 == 0)
+                if (a == 1 || a % 2 == 0)
                 {
                     for (int i = 0; i < 20; i++)
                     {
