@@ -12,6 +12,11 @@ using Array = System.Array;
 using Org.BouncyCastle.Bcpg.Sig;
 using static System.Collections.Specialized.BitVector32;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using ICSharpCode.SharpZipLib.Zip;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using NPOI.SS.Formula.Functions;
+using NPOI.OpenXmlFormats.Spreadsheet;
+using System.Windows.Forms;
 
 namespace src
 {
@@ -27,7 +32,20 @@ namespace src
     //
     //
 
+    public class InputedOtherThanEnglishOrJapaneseException : Exception
+    {
+        public InputedOtherThanEnglishOrJapaneseException() { }
 
+        public InputedOtherThanEnglishOrJapaneseException(string message)
+            : base(message)
+        {
+        }
+
+        public InputedOtherThanEnglishOrJapaneseException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+    }
 
 
     public class ConsoleBuffer
@@ -291,7 +309,7 @@ namespace src
         public CSharpConsoleTUI()
         {
             keyEvent = new KeyEvent();
-            renderingForConsole = new();
+            renderingForConsole = new(keyEvent);
             keyEventHandler = new(4, keyEvent);
         }
     }
@@ -345,7 +363,6 @@ namespace src
         public bool left_pressd { get; set; } = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
         public bool space_pressd { get; set; } = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
         public bool shift_pressed { get; set; } = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
-
         public void ReDefine()
         {
             up_pressd = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
@@ -562,24 +579,45 @@ namespace src
         }
     }
 
+    internal interface IRenderingElementRelatedInConsoleSize
+    {
+        public void ReSetConsoleSize();
+    }
+
     //manage sheet queue and enteier using rendering for console
-    internal class RenderingForConsole
+    internal class RenderingForConsole : IRenderingElementRelatedInConsoleSize
     {
         private List<Sheet> sheet_q;
         private Sheet? sheet_to_render;
+        private IKeyEvent keyEvent;
+        private List<StringBuilder> text_to_write = new();
+        private StringBuilder fainal_sb_to_write = new();
+        private int console_y_length = 0;
+        private int sheet_serial_num = 0;
 
-        public RenderingForConsole()
+        public RenderingForConsole(IKeyEvent keyEvent)
         {
             sheet_q = new List<Sheet>();
             sheet_to_render = null;
+            this.keyEvent = keyEvent;
+        }
+
+        public void ReSetConsoleSize()
+        {
+            int to = Console.WindowHeight;
+            while ( console_y_length > to)
+            {
+                text_to_write.Add(new StringBuilder());
+            }
         }
 
         public void AddSheet(Sheet? arg_sheet = null, int index = -1)
         {
             if (arg_sheet == null)
             {
-                arg_sheet = new Sheet();
+                arg_sheet = new Sheet(keyEvent);
             }
+            arg_sheet.serial_number = sheet_serial_num++;
 
             if (index < 0)
             {
@@ -608,29 +646,114 @@ namespace src
                 return;
             }
 
-            var sections_in_line = sheet_to_render.GetSectionsInLine();
-            foreach ( List<SectionInfoInLine> line in sections_in_line)
+            for (int text_to_write_y = 0; text_to_write_y < console_y_length; text_to_write_y++)
             {
-                bool all_is_dont_changed = false;
-                /*
-                foreach (SectionInfoInLine sectionInfo in line)
+                //変更されているかされていないか判定.
+                //されていたら次のコンソール行へ.
+                bool no_section_is_changed = true;
+                foreach (SectionInfoInLine sectionInfoInLine in sheet_to_render.applicable_sections_in_line[text_to_write_y])
                 {
-                    //sectionでchangedかどうか千さする
-                    Section section = sheet_to_render.GetSection(sectionInfo.section_serial_num);
+                    Section section = sheet_to_render.GetSection(sectionInfoInLine.section_serial_num);
+                    int section_y = section.Page_starting_y_pos + sectionInfoInLine.line_serial;
+                    bool no_layer_is_changed = true;
+                    foreach (SectionLayer layer in section.layers)
+                    {
+                        if (layer.texts[section_y].Is_changed)
+                        {
+                            no_layer_is_changed = false;
+                            break;
+                        }
+                    }
+                    if (!no_section_is_changed)
+                    {
+                        no_section_is_changed = false;
+                        break;
+                    }
                 }
-                */
-                foreach (SectionInfoInLine sectionInfo in line)
+                if (no_section_is_changed)
                 {
-                    Section section = sheet_to_render.GetSection(sectionInfo.section_serial_num);
+                    continue;
+                }
+
+                //以下変更有.
+                text_to_write[text_to_write_y].Clear();
+                foreach (SectionInfoInLine sectionInfoInLine in sheet_to_render.applicable_sections_in_line[text_to_write_y])
+                {
+                    Section section = sheet_to_render.GetSection(sectionInfoInLine.section_serial_num);
+                    int section_y = section.Page_starting_y_pos + sectionInfoInLine.line_serial;
+
+                    //このyについて
+                    //英字分一文字ずつ書いていく
+                    int section_x = section.Page_starting_x_pos;
+                    int section_x_from_zero = 0;
+                    int text_to_write_x = 0;
+                    while (section_x < section.Page_starting_x_pos + section.X_span)
+                    {
+                        if (section_x == section.Length_in_English - 1)
+                            break;
+
+                        SectionLayer layer;
+                        CharType charType;
+                        for (int i = 0, layer_index = section.layers.Count - 1; i < section.layers.Count; i++, layer_index--)
+                        {
+                            layer = section.GetSectionLayer(layer_index);
+                            charType = layer.texts_info[section_y][section_x].type;
+
+                            switch (charType)
+                            {
+                                case CharType.Empty:
+                                    if (layer_index == 0)
+                                    {
+                                        text_to_write[text_to_write_y][text_to_write_x] = ' ';
+                                    }
+                                    continue;
+
+                                case CharType.English:
+                                    text_to_write[text_to_write_y][text_to_write_x] = layer.texts[section_y].sb[layer.texts_info[section_y][section_x].text_index];
+                                    section_x++;
+                                    goto break_for;
+
+                                case CharType.JapaneseStart:
+                                    if (section_x + 2 > section.Page_starting_x_pos + section.X_span)
+                                    {
+                                        text_to_write[text_to_write_y][text_to_write_x] = ' ';
+                                    }
+                                    else
+                                    {
+                                        text_to_write[text_to_write_y][text_to_write_x] = layer.texts[section_y].sb[layer.texts_info[section_y][section_x].text_index];
+                                        section_x += 2;
+                                    }
+                                    goto break_for;
+
+                                default:
+                                    break;
+
+                            }
+                        }
+
+                    break_for:
+                        ;
+                    }
+
+                    //余りの空白部分を埋める.
+                    for (int i = 0; i < section.X_span - section_x_from_zero - 1; i++, text_to_write_x++)
+                    {
+                        text_to_write[text_to_write_y][text_to_write_x] = ' ';
+                    }
+
                 }
             }
 
-            //スクリーンにまとめあげる
-            //同時に差分を検知する行ごとに
-            
-
-            //差分がある行のところだけを描画する.
-            
+            for (int i = 0; i < console_y_length; i++)
+            {
+                fainal_sb_to_write.Append(text_to_write[i]);
+                if (i != console_y_length - 1)
+                {
+                    fainal_sb_to_write.Append("\n");
+                }
+            }
+            Console.SetCursorPosition(0, 0);
+            Console.Write(fainal_sb_to_write);
         }
 
     }
@@ -660,15 +783,18 @@ namespace src
         }
 
         public int serial_number { get; set; }
+        private int section_serial_number = 0;
         private List<Section> sections;
-        private List<List<SectionInfoInLine>> applicable_sections_in_line;
+        public List<List<SectionInfoInLine>> applicable_sections_in_line { get; private set; }
         private List<int> section_serial_number_s = new();
         private List<int> section_x_pos_list = new();
         private List<SectionSerialNumberAndXpos> serial_and_xpos = new();
+        private IKeyEvent keyEvent;
 
-        public Sheet()
+        public Sheet(IKeyEvent keyEvent)
         {
             sections = new List<Section>();
+            this.keyEvent = keyEvent;
         }
 
         void XposSort()
@@ -696,12 +822,17 @@ namespace src
             return applicable_sections_in_line;
         }
 
-        public void AddSection(Section? arg_section = null, int index = -1)
+        public void AddSection(int x_pos, int x_span, int y_pos, int y_span, int index = -1, Section? arg_section = null)
         {
             if (arg_section == null)
             {
-                arg_section = new Section();
+                arg_section = new Section(keyEvent);
             }
+            arg_section.serial_number = section_serial_number++;
+            arg_section.X_pos = x_pos;
+            arg_section.Y_pos = y_pos;
+            arg_section.Y_span = y_span;
+            arg_section.X_span = x_span;
 
             if (index < 0)
             {
@@ -747,7 +878,7 @@ namespace src
         }
     }
 
-    public class Section
+    internal class Section : IRenderingElementRelatedInConsoleSize
     {
         public int serial_number { get; set; }
         public int X_pos { get; set; }
@@ -755,21 +886,46 @@ namespace src
         public int Y_pos { get; set; }
         public int Y_span { get; set; }
 
-        public int PageStartingLine { get; set; }
+        public bool Is_changed_in_page { get; set; }
 
-        private List<SectionLayer> layers;
+        public int Page_starting_y_pos { get; set; }
+        public int Page_starting_x_pos { get; set; }
 
-        public Section()
+        public int Total_writed_line_count { get; set; } = 0;
+        public int Length_in_English { get; set; } = new();
+        private int section_layer_serial_num = 0;
+
+        public List<SectionLayer> layers { get; set; }
+        private IKeyEvent keyEvent;
+
+        public Section(IKeyEvent keyEvent)
         {
             layers = new List<SectionLayer>();
+            this.keyEvent = keyEvent;
         }
 
-        public void AddSection(SectionLayer? arg_layer = null, int index = -1)
+        public void ReSetConsoleSize()
+        {
+
+        }
+
+        public int GetPageFinishingY()
+        {
+            return Page_starting_y_pos + Y_pos - 1;
+        }
+
+        public int GetPageFinishingX()
+        {
+            return Page_starting_x_pos + X_pos - 1;
+        }
+
+        public void AddSectionLayer(SectionLayer? arg_layer = null, int index = -1)
         {
             if (arg_layer == null)
             {
-                arg_layer = new SectionLayer();
+                arg_layer = new SectionLayer(keyEvent, this);
             }
+            arg_layer.serial_number = section_layer_serial_num++;
 
             if (index < 0)
             {
@@ -781,27 +937,145 @@ namespace src
             }
         }
 
-        public SectionLayer GetSection(int inndex)
+        public SectionLayer GetSectionLayer(int inndex)
         {
             return layers[inndex];
         }
+
+        private void Wait()
+        {
+            while (keyEvent.up_pressd | keyEvent.down_pressd | keyEvent.right_pressd | keyEvent.left_pressd | keyEvent.space_pressd)
+            {
+                Thread.Sleep(1);
+            }
+        }
+        public void UpPage(bool for_key)
+        {
+            int previous_page_y = Page_starting_y_pos;
+            if (Page_starting_y_pos != 0) {
+                Page_starting_y_pos -= Y_span;
+                if (Page_starting_y_pos < 0)
+                {
+                    Page_starting_y_pos = 0;
+                }
+            }
+
+            if (previous_page_y != Page_starting_y_pos)
+            {
+                Is_changed_in_page = true;
+            }
+            if (for_key)
+            {
+                Wait();
+            }
+        }
+        public void DownPage(bool for_key)
+        {
+            int previous_page_y = Page_starting_y_pos;
+            Page_starting_y_pos += Y_span;
+            if (Page_starting_y_pos + Y_span > Total_writed_line_count)
+            {
+                Page_starting_y_pos = Total_writed_line_count - Y_span;
+            }
+
+            if (previous_page_y != Page_starting_y_pos)
+            {
+                Is_changed_in_page = true;
+            }
+            if (for_key)
+            {
+                Wait();
+            }
+        }
+        public void LeftSlidePage(bool for_key)
+        {
+            int previous_x_pos = Page_starting_x_pos;
+            if (Page_starting_x_pos != 0)
+            {
+                Page_starting_x_pos -= X_span;
+                if (Page_starting_x_pos < 0)
+                {
+                    Page_starting_x_pos = 0;
+                }
+            }
+
+            if (previous_x_pos != Page_starting_x_pos)
+            {
+                Is_changed_in_page = true;
+            }
+            if (for_key)
+            {
+                Wait();
+            }
+        }
+        public void RightSlidePage(bool for_key)
+        {
+            int previous_x_pos = Page_starting_x_pos;
+            Page_starting_x_pos += X_span;
+            if (Page_starting_x_pos > Length_in_English)
+            {
+                Page_starting_x_pos = Length_in_English - X_span;
+            }
+
+            if (previous_x_pos != Page_starting_x_pos)
+            {
+                Is_changed_in_page = true;
+            }
+            if (for_key)
+            {
+                Wait();
+            }
+        }
+    }
+    internal enum CharType
+    {
+        Empty = 0,
+        English = 1,
+        JapaneseStart = 2,
+        JapaneseEnd = 3,
     }
 
-    public class SectionLayer
+    internal class SectionLayerTextInfo
+    {
+        public SectionLayerTextInfo(int text_i)
+        {
+            text_index = text_i;
+        }
+        public int text_index = -1;
+        public CharType type = CharType.Empty;
+    }
+
+    internal class SectionLayerTextsAndLenght
+    {
+        public StringBuilder sb = new StringBuilder();
+        public int length_in_English = 0;
+        public bool Is_changed = false;
+    }
+
+    internal class SectionLayer : IRenderingElementRelatedInConsoleSize
     {
         public int serial_number { get; set; }
-        private List<StringBuilder> texts;
-        private int total_line_num = 0;
+        public List<SectionLayerTextsAndLenght> texts { get; private set; }
+        public List<List<SectionLayerTextInfo>> texts_info { get; private set; }
+        public int Total_writed_line_count { get; set; } = 0;
+        private int previous_current_y_when_write = 0;
         private int current_x = 0;
         private int current_y = 0;
+        private Section parent_section;
         private bool is_fix_current_x = false;
-        private bool is_with_clear = false;
 
-        public bool IsCleadCurrently { get; set; } = true;
+        public bool IsClearedCurrently { get; set; } = true;
 
-        public SectionLayer()
+        public SectionLayer(IKeyEvent keyEvent, Section parent_section)
         {
-            texts = new List<StringBuilder>();
+            texts = new List<SectionLayerTextsAndLenght>();
+            texts_info = new List<List<SectionLayerTextInfo>>();
+            this.parent_section = parent_section;
+        }
+
+        public void ReSetConsoleSize()
+        {
+
         }
 
         public int GetLenOfTextsList()
@@ -809,18 +1083,23 @@ namespace src
             return texts.Count;
         }
 
-        public int GetTotalLineNnum()
-        {
-            return total_line_num;
-        }
-
         public void Clear()
         {
-            IsCleadCurrently = true;
+            current_x = 0;
             current_y = 0;
+            previous_current_y_when_write = 0;
+            Total_writed_line_count = 0;
             foreach (var text in texts)
             {
-                text.Clear();
+                text.sb.Clear();
+            }
+            foreach (var info_in_line in texts_info)
+            {
+                foreach(var info in info_in_line)
+                {
+                    info.type = CharType.Empty;
+                    info.text_index = 0;
+                }
             }
         }
 
@@ -835,31 +1114,274 @@ namespace src
             is_fix_current_x = true;
         }
 
-        public void Write(string str)
+        private bool IsInRangeOfPage()
         {
+            return true;
+        }
+
+        private enum SimpleCharType
+        {
+            None,
+            English,
+            Japanese
+        }
+
+        private SimpleCharType JudgeCharType(char c)
+        {
+            if ((uint)(c - 'A') <= 'Z' - 'A' ||
+                    (uint)(c - 'a') <= 'z' - 'a') //英語
+            {
+                return SimpleCharType.English;
+            }
+            else if (
+                (uint)(c - '\u3040') <= '\u309F' - '\u3040' ||
+                (uint)(c - '\u30A0') <= '\u30FF' - '\u30A0' ||
+                (uint)(c - '\u4E00') <= '\u9FFF' - '\u4E00') //日本語
+            {
+                return SimpleCharType.Japanese;
+            }
+
+            return SimpleCharType.None;
+        }
+
+        private void MakeUpYListsBlanckUntil(int y)
+        {
+            while (y > texts.Count - 1)
+            {
+                texts.Add(new SectionLayerTextsAndLenght());
+            }
+            while (y > texts_info.Count - 1)
+            {
+                texts_info.Add(new List<SectionLayerTextInfo>());
+            }
+        }
+
+        private void MakeUpXListsBlanckUntil(int x)
+        {
+            while (x > texts[current_y].sb.Length - 1)
+            {
+                texts[current_y].sb.Append(" ");
+            }
+            while (x > texts_info[current_y].Count - 1)
+            {
+                texts_info[current_y].Add(new SectionLayerTextInfo(texts_info[current_y][x - 1].text_index + 1));
+            }
+        }
+
+        private bool IsChangedInPage(int length)
+        {
+            //if parent_section have ever been changed &&
+            //if current_y is in range of page
+            return
+            (
+                parent_section.Is_changed_in_page == false &&
+                length != 0 &&
+                (current_y >= parent_section.Page_starting_y_pos && current_y <= parent_section.GetPageFinishingY() &&
+                current_x >= parent_section.Page_starting_x_pos && current_x <= parent_section.GetPageFinishingX())
+            );
+        }
+        private void SetInfoInEmptyAndProceedX(ref int text_i, ref int x)
+        {
+            texts_info[current_y][x].type = CharType.Empty;
+            texts_info[current_y][x].text_index = text_i;
+
+            x++;
+        }
+        private void SetInfoInEnglishAndProceedX(ref int text_i, ref int x)
+        {
+            texts_info[current_y][x].type = CharType.English;
+            texts_info[current_y][x].text_index = text_i;
+
+            x++;
+        }
+        private void SetInfoInJapaneseAndProceedX(ref int text_i, ref int x)
+        {
+            texts_info[current_y][x].type = CharType.JapaneseStart;
+            texts_info[current_y][x + 1].type = CharType.JapaneseEnd;
+
+            texts_info[current_y][x].text_index = text_i;
+            texts_info[current_y][x + 1].text_index = text_i;
+
+            x += 2;
+        }
+
+        private void SetTotalLineCountAndLength()
+        {
+            if (current_y > Total_writed_line_count - 1)
+            {
+                Total_writed_line_count = current_y + 1;
+            }
+            if (Total_writed_line_count > parent_section.Total_writed_line_count)
+            {
+                parent_section.Total_writed_line_count = Total_writed_line_count;
+            }
+
+            if (current_y > texts[current_y].length_in_English - 1)
+            {
+                texts[current_y].length_in_English = current_x;
+            }
+            if (texts[current_y].length_in_English > parent_section.Length_in_English)
+            {
+                parent_section.Length_in_English = texts[current_y].length_in_English;
+            }
+        }
+
+        public SectionLayer WriteEmpty(int length)
+        {
+            MakeUpYListsBlanckUntil(current_y);
+
+            //currentまで一旦.
+            MakeUpXListsBlanckUntil(current_x);
+
+            //差分で完全一致な帰る.
+            if (texts_info[current_y][current_y].type != CharType.JapaneseEnd)
+            {
+                bool is_same = true;
+                for (int i = 0, x = current_x; i < length; i++, x++)
+                {
+                    MakeUpXListsBlanckUntil(x);
+                    if (texts_info[current_y][x].type != CharType.Empty)
+                    {
+                        is_same = false;
+                        break;
+                    }
+                }
+                if (is_same)
+                {
+                    current_x += length;
+                    return this;
+                }
+            }
+
+            if (length != 0)
+            {
+                texts[current_y].Is_changed = true;
+            }
+            parent_section.Is_changed_in_page = IsChangedInPage(length);
+
+            int first_text_i = texts_info[current_y][current_x].text_index;
+            int text_i = first_text_i;
+            int first_add_blanck = 0;
+            int end_add_blanck = 0;
+            if (texts_info[current_y][current_x].type == CharType.JapaneseEnd)
+            {
+                current_x--;
+                SetInfoInEmptyAndProceedX(ref text_i, ref current_x);
+                first_add_blanck++;
+            }
+
+            for (int i = 0; i < length; i++)
+            {
+                SetInfoInEmptyAndProceedX(ref text_i, ref current_x);
+                if (i == length - 1 && texts_info[current_y][current_x].type == CharType.JapaneseStart)
+                {
+                    end_add_blanck++;
+                }
+            }
+
+            int end_text_i = texts_info[current_y][current_x].text_index;
+            StringBuilder sb = new StringBuilder();
+            sb.Append(' ', length + first_add_blanck + end_add_blanck);
+            texts[current_y].sb.Remove(first_text_i, end_text_i - first_text_i + 1);
+            texts[current_y].sb.Insert(first_text_i, sb);
+
+            SetTotalLineCountAndLength();
+
+            return this;
+        }
+
+        public SectionLayer WriteLineEmpty(int length)
+        {
+            WriteEmpty(length);
+            current_y++;
+            return this;
+        }
+
+        public SectionLayer Write(string str)
+        {
+            MakeUpYListsBlanckUntil(current_y);
+            MakeUpXListsBlanckUntil(current_x);
+
+            //もし以前と変更なしなら帰る.
+            if (texts_info[current_y][current_y].type != CharType.JapaneseEnd)
+            {
+                bool is_same = true;
+                int current_x_proceed = current_x;
+                for (int i = 0, index = texts_info[current_y][current_x].text_index; i < str.Length; i++, index++)
+                {
+                    MakeUpXListsBlanckUntil(current_x_proceed);
+
+                    if (str[i] != texts[current_y].sb[index] && texts_info[current_y][current_x_proceed].type != CharType.Empty)
+                    {
+                        is_same = false;
+                        break;
+                    }
+                    switch (JudgeCharType(str[i]))
+                    {
+                        case SimpleCharType.English:
+                        case SimpleCharType.None:
+                            current_x_proceed++;
+                            break;
+                        case SimpleCharType.Japanese:
+                            current_x_proceed += 2;
+                            break;
+                    }
+                }
+                if (is_same)
+                    current_x = current_x_proceed;
+                    return this;
+            }
+
+            //以下以前と変更あり.
             if (str.Length != 0)
             {
-                IsCleadCurrently = false;
+                texts[current_y].Is_changed = true;
             }
+            parent_section.Is_changed_in_page = IsChangedInPage(str.Length);
 
-            if (current_y > total_line_num)
+
+            int first_text_i = texts_info[current_y][current_x].text_index;
+            int text_i = first_text_i;
+            if (texts_info[current_y][current_x].type == CharType.JapaneseEnd)
             {
-                texts.Add(new StringBuilder());
-                total_line_num++;
+                str = " " + str;
+                current_x--;
+                SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
             }
-
-            int lenght = texts[current_y].Length;
-            if (current_x != 0 && lenght > current_x)
+            for (int str_i = 0; str_i < str.Length; str_i++)
             {
-                texts[current_y].Remove(current_x, lenght - current_x);
+                MakeUpXListsBlanckUntil(current_x);
+
+                char c = str[str_i];
+                switch (JudgeCharType(c))
+                {
+                    case SimpleCharType.English:
+                        SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
+                        break;
+
+                    case SimpleCharType.Japanese:
+                        SetInfoInJapaneseAndProceedX(ref text_i, ref current_x);
+                        break;
+
+                    case SimpleCharType.None:
+                        SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
+                        throw new InputedOtherThanEnglishOrJapaneseException("SectionLayerのWrite/WriteLine関数に関して、英語と日本語以外が入力されました。");
+                }
+
+                if (str_i == str.Length - 1 && texts_info[current_y][current_x].type == CharType.JapaneseStart)
+                {
+                    str = str + " ";
+                    SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
+                }
             }
 
-            if (lenght < current_x)
-            {
-                texts[current_y].Append(' ', current_x -  lenght);
-            }
+            int end_text_i = texts_info[current_y][current_x].text_index;
+            texts[current_y].sb.Remove(first_text_i, end_text_i - first_text_i + 1);
+            texts[current_y].sb.Insert(first_text_i, str);
 
-            texts[current_y].Append(str);
+            SetTotalLineCountAndLength();
+
+            return this;
         }
 
         public void WriteLine(string str)
@@ -1045,7 +1567,7 @@ namespace src
 
     public class BottunQ
     {
-        private IKeyEvent keyEventHanler;
+        private IKeyEvent keyEvent;
         private List<List<Bottun>> bottun_queue = new();
         private int bottun_x = 0;
         private int bottun_y = 0;
@@ -1060,10 +1582,10 @@ namespace src
         private int y_length { get; set; } = 0;
         private int x_length { get; set; } = 0;
 
-        public BottunQ(Action writePage, IKeyEvent keyEventHanler)
+        public BottunQ(Action writePage, IKeyEvent keyEvent)
         {
             WritePage = writePage;
-            this.keyEventHanler = keyEventHanler;
+            this.keyEvent = keyEvent;
         }
 
         public void BeLocked()
@@ -1247,7 +1769,7 @@ namespace src
 
         public void Wait()
         {
-            while (keyEventHanler.up_pressd | keyEventHanler.down_pressd | keyEventHanler.right_pressd | keyEventHanler.left_pressd | keyEventHanler.space_pressd)
+            while (keyEvent.up_pressd | keyEvent.down_pressd | keyEvent.right_pressd | keyEvent.left_pressd | keyEvent.space_pressd)
             {
                 Thread.Sleep(1);
             }
@@ -1584,7 +2106,8 @@ namespace src
 
         public void Process()
         {
-            RenderingForConsole renderingForConsole = new();
+            IKeyEvent keyEvent = new KeyEvent();
+            RenderingForConsole renderingForConsole = new(keyEvent);
             
         }
 
