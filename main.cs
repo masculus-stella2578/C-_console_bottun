@@ -17,6 +17,7 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using NPOI.SS.Formula.Functions;
 using NPOI.OpenXmlFormats.Spreadsheet;
 using System.Windows.Forms;
+using static NPOI.HSSF.Util.HSSFColor;
 
 namespace src
 {
@@ -31,6 +32,7 @@ namespace src
 
     //
     //
+    
 
     public class InputedOtherThanEnglishOrJapaneseException : Exception
     {
@@ -302,9 +304,9 @@ namespace src
 
     internal class CSharpConsoleTUI
     {
-        private RenderingForConsole renderingForConsole;
-        private KeyEventHandler keyEventHandler;
-        private IKeyEvent keyEvent;
+        public RenderingClassForConsole renderingForConsole { get; private set; }
+        public KeyEventHandler keyEventHandler { get; private set; }
+        public IKeyEvent keyEvent { get; private set; }
 
         public CSharpConsoleTUI()
         {
@@ -314,7 +316,7 @@ namespace src
         }
     }
 
-    public interface IKeyEvent
+    internal interface IKeyEvent
     {
         [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
@@ -327,21 +329,13 @@ namespace src
         const int VK_L = 0x25;
         const int VK_SPACE = 0x0D;
         const int VK_SHIFT = 0x10;
-        public bool ctrlPressed { get; set; }
-        bool sPressed { get; set; }
-        public bool escPressed { get; set; }
-        public bool up_pressd { get; set; }
-        public bool down_pressd { get; set; }
-        public bool right_pressd { get; set; }
-        public bool left_pressd { get; set; }
-        public bool space_pressd { get; set; }
-        public bool shift_pressed { get; set; }
 
         public void ReDefine();
+        public bool GetIsPressedArrayByIndex(KeyToIndex keyToIndex);
     }
 
     //本番環境
-    public class KeyEvent : IKeyEvent
+    internal class KeyEvent : IKeyEvent
     {
         [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
@@ -352,31 +346,60 @@ namespace src
         const int VK_DOWN = 0x28;
         const int VK_R = 0x27;
         const int VK_L = 0x25;
-        const int VK_SPACE = 0x0D;
+        const int VK_ENTER = 0x0D;
         const int VK_SHIFT = 0x10;
-        public bool ctrlPressed { get; set; } = ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0);
-        public bool sPressed { get; set; } = ((GetAsyncKeyState(VK_S) & 0x8000) != 0);
-        public bool escPressed { get; set; } = ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) != 0);
-        public bool up_pressd { get; set; } = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
-        public bool down_pressd { get; set; } = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
-        public bool right_pressd { get; set; } = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
-        public bool left_pressd { get; set; } = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
-        public bool space_pressd { get; set; } = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
-        public bool shift_pressed { get; set; } = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+        private bool[] Is_pressed_array_current = new bool[KeyEventHandlerElement.number_of_available_key];
+        private bool[] Is_pressed_array_next = new bool[KeyEventHandlerElement.number_of_available_key];
+        private bool stop_process = false;
+        private CancellationTokenSource? _cts;
+
+        public KeyEvent()
+        {
+
+        }
+        
         public void ReDefine()
         {
-            up_pressd = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
-            down_pressd = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
-            right_pressd = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
-            left_pressd = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
-            space_pressd = ((GetAsyncKeyState(VK_SPACE) & 0x8000) != 0);
-            shift_pressed = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+            Is_pressed_array_next[(int)KeyToIndex.Up] = ((GetAsyncKeyState(VK_UP) & 0x8000) != 0);
+            Is_pressed_array_next[(int)KeyToIndex.Down] = ((GetAsyncKeyState(VK_DOWN) & 0x8000) != 0);
+            Is_pressed_array_next[(int)KeyToIndex.Right] = ((GetAsyncKeyState(VK_R) & 0x8000) != 0);
+            Is_pressed_array_next[(int)KeyToIndex.Left] = ((GetAsyncKeyState(VK_L) & 0x8000) != 0);
+            Is_pressed_array_next[(int)KeyToIndex.Enter] = ((GetAsyncKeyState(VK_ENTER) & 0x8000) != 0);
+            Is_pressed_array_next[(int)KeyToIndex.Shift] = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
+        }
+
+        private void Process(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                ReDefine();
+                var temp = Is_pressed_array_current;
+                Is_pressed_array_current = Is_pressed_array_next;
+                Is_pressed_array_next = temp;
+                Thread.Sleep(10);
+            }
+        }
+
+        public void Start()
+        {
+            _cts = new CancellationTokenSource();
+            Task.Run(() => Process(_cts.Token));
+        }
+
+        public void Stop()
+        {
+            _cts?.Cancel();
+        }
+
+        public bool GetIsPressedArrayByIndex(KeyToIndex keyToIndex)
+        {
+            return Is_pressed_array_current[(int)keyToIndex];
         }
     }
 
     internal class KeyEventHandlerElement
     {
-        protected const int number_of_available_key = 16;
+        internal const int number_of_available_key = 16;
     }
 
     internal enum KeyToIndex
@@ -404,11 +427,10 @@ namespace src
 
         private List<Action>[] actions = new List<Action>[number_of_available_key];
         private IKeyEvent keyEvent;
-        private Thread thread;
+        private CancellationTokenSource? _cts;
         public KeyEventHandlerOneThread(IKeyEvent keyEvent)
         {
             this.keyEvent = keyEvent;
-            thread = new Thread(this.KeyEventHandl);
         }
 
         public void SetOneKeyAction(int index, List<Action> arg_actions)
@@ -424,71 +446,19 @@ namespace src
             }
         }
 
-        public void KeyEventHandl()
+        public void KeyEventHandl(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                if (keyEvent.up_pressd)
+                for (int i = 0; i < KeyEventHandlerElement.number_of_available_key ; i++)
                 {
-                    ExecuteActions(KeyToIndex.Up);
+                    if (keyEvent.GetIsPressedArrayByIndex((KeyToIndex)i))
+                    {
+                        ExecuteActions((KeyToIndex)i);
+                    }
                 }
-                if (keyEvent.down_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Down);
-                }
-                if (keyEvent.right_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Right);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Left);
-                }
-
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.W);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.S);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.D);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.A);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Shift_W);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Shift_S);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Shift_D);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Shift_A);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Shift_Q);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Shift_E);
-                }
-                if (keyEvent.left_pressd)
-                {
-                    ExecuteActions(KeyToIndex.Enter);
-                }
+                //cpu負荷軽減.
+                Thread.Sleep(10);
             }
         }
 
@@ -499,12 +469,13 @@ namespace src
 
         public void Start()
         {
-            thread.Start();
+            _cts = new CancellationTokenSource();
+            Task.Run(() => KeyEventHandl(_cts.Token));
         }
 
         public void Stop()
         {
-            thread.Join();
+            _cts?.Cancel();
         }
     }
 
@@ -585,7 +556,7 @@ namespace src
     }
 
     //manage sheet queue and enteier using rendering for console
-    internal class RenderingForConsole : IRenderingElementRelatedInConsoleSize
+    internal class RenderingClassForConsole : IRenderingElementRelatedInConsoleSize
     {
         private List<Sheet> sheet_q;
         private Sheet? sheet_to_render;
@@ -595,7 +566,7 @@ namespace src
         private int console_y_length = 0;
         private int sheet_serial_num = 0;
 
-        public RenderingForConsole(IKeyEvent keyEvent)
+        public RenderingClassForConsole(IKeyEvent keyEvent)
         {
             sheet_q = new List<Sheet>();
             sheet_to_render = null;
@@ -629,6 +600,15 @@ namespace src
             }
         }
 
+        public void AddSheet(int times)
+        {
+            for (int i = 0; i < times; i++)
+            {
+                Sheet sheet = new Sheet(keyEvent);
+                sheet_q.Add(sheet);
+            }
+        }
+
         public Sheet GetSheet(int inndex)
         {
             return sheet_q[inndex];
@@ -646,10 +626,12 @@ namespace src
                 return;
             }
 
+            //コンソール上の行を一行ずつ回す.
             for (int text_to_write_y = 0; text_to_write_y < console_y_length; text_to_write_y++)
             {
                 //変更されているかされていないか判定.
                 //されていたら次のコンソール行へ.
+                //このyに入っているsectionを回して、全てのセクションが変更なし、か、一つでも変更有かどうかを調べる.
                 bool no_section_is_changed = true;
                 foreach (SectionInfoInLine sectionInfoInLine in sheet_to_render.applicable_sections_in_line[text_to_write_y])
                 {
@@ -658,13 +640,13 @@ namespace src
                     bool no_layer_is_changed = true;
                     foreach (SectionLayer layer in section.layers)
                     {
-                        if (layer.texts[section_y].Is_changed)
+                        if (layer.texts_info[section_y].Is_changed)
                         {
                             no_layer_is_changed = false;
                             break;
                         }
                     }
-                    if (!no_section_is_changed)
+                    if (!no_layer_is_changed)
                     {
                         no_section_is_changed = false;
                         break;
@@ -676,14 +658,16 @@ namespace src
                 }
 
                 //以下変更有.
+
                 text_to_write[text_to_write_y].Clear();
+
+                //このyに入っているsectionを回す.
                 foreach (SectionInfoInLine sectionInfoInLine in sheet_to_render.applicable_sections_in_line[text_to_write_y])
                 {
                     Section section = sheet_to_render.GetSection(sectionInfoInLine.section_serial_num);
                     int section_y = section.Page_starting_y_pos + sectionInfoInLine.line_serial;
 
-                    //このyについて
-                    //英字分一文字ずつ書いていく
+                    //pageに含まれるxを回して、英字分一文字ずつ書いていく
                     int section_x = section.Page_starting_x_pos;
                     int section_x_from_zero = 0;
                     int text_to_write_x = 0;
@@ -694,10 +678,16 @@ namespace src
 
                         SectionLayer layer;
                         CharType charType;
+                        //後ろからlayerを回す.
                         for (int i = 0, layer_index = section.layers.Count - 1; i < section.layers.Count; i++, layer_index--)
                         {
                             layer = section.GetSectionLayer(layer_index);
-                            charType = layer.texts_info[section_y][section_x].type;
+
+                            //x, yに文字がなかったらcontinu
+                            if (section_y > layer.Total_writed_line_count - 1 || section_x > layer.texts_info[section_y].length_in_English - 1)
+                                continue;
+
+                            charType = layer.texts_info[section_y].char_info_list[section_x].type;
 
                             switch (charType)
                             {
@@ -708,22 +698,22 @@ namespace src
                                     }
                                     continue;
 
-                                case CharType.English:
-                                    text_to_write[text_to_write_y][text_to_write_x] = layer.texts[section_y].sb[layer.texts_info[section_y][section_x].text_index];
+                                case CharType.Singular:
+                                    text_to_write[text_to_write_y][text_to_write_x] = layer.texts_info[section_y].char_info_list[section_x].charactor;
                                     section_x++;
-                                    goto break_for;
+                                    goto break_layer_for_stmt;
 
-                                case CharType.JapaneseStart:
+                                case CharType.PluralStart:
                                     if (section_x + 2 > section.Page_starting_x_pos + section.X_span)
                                     {
                                         text_to_write[text_to_write_y][text_to_write_x] = ' ';
                                     }
                                     else
                                     {
-                                        text_to_write[text_to_write_y][text_to_write_x] = layer.texts[section_y].sb[layer.texts_info[section_y][section_x].text_index];
+                                        text_to_write[text_to_write_y][text_to_write_x] = layer.texts_info[section_y].char_info_list[section_x].charactor;
                                         section_x += 2;
                                     }
-                                    goto break_for;
+                                    goto break_layer_for_stmt;
 
                                 default:
                                     break;
@@ -731,8 +721,8 @@ namespace src
                             }
                         }
 
-                    break_for:
-                        ;
+                    break_layer_for_stmt:
+                        text_to_write_x++;
                     }
 
                     //余りの空白部分を埋める.
@@ -944,7 +934,11 @@ namespace src
 
         private void Wait()
         {
-            while (keyEvent.up_pressd | keyEvent.down_pressd | keyEvent.right_pressd | keyEvent.left_pressd | keyEvent.space_pressd)
+            while (keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Up) 
+                | keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Down) 
+                | keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Left) 
+                | keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Right) 
+                | keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Enter))
             {
                 Thread.Sleep(1);
             }
@@ -1027,27 +1021,58 @@ namespace src
             }
         }
     }
+
     internal enum CharType
     {
         Empty = 0,
-        English = 1,
-        JapaneseStart = 2,
-        JapaneseEnd = 3,
+
+        Singular = 1,
+        PluralStart = 2,
+        //PluralMiddle = 3,
+        PluralEnd = 4,
     }
 
-    internal class SectionLayerTextInfo
+    public static class TUIColorString
     {
-        public SectionLayerTextInfo(int text_i)
-        {
-            text_index = text_i;
-        }
-        public int text_index = -1;
+        static private HashSet<string> set = new() {
+            TUIColorString.Reset,
+            TUIColorString.Red,
+            TUIColorString.Green,
+            TUIColorString.WriteBack
+        };
+        public const string Black = "\u001b[30m";
+        public const string Red = "\u001b[31m";
+        public const string Green = "\u001b[32m";
+        public const string Reset = "\u001b[0m";
+        public const string WriteBack = "\u001b[47m";
+        public const string None = "";
+    }
+
+    internal enum TUIColorEnum
+    {
+        None,
+
+        Reset = 0,
+
+        RedLetter = 31,
+        GreenLetter = 32,
+        WriteLetter = 37,
+        BlackLetter = 30,
+
+        WriteBack = 47
+    }
+
+    internal class SectionCharInfo
+    {
+        public string color_arg1 = TUIColorString.None;
+        public string color_arg2 = TUIColorString.None;
         public CharType type = CharType.Empty;
+        public char charactor = '\0';
     }
 
-    internal class SectionLayerTextsAndLenght
+    internal class SectionTextInfoInLine
     {
-        public StringBuilder sb = new StringBuilder();
+        public List<SectionCharInfo> char_info_list = new();
         public int length_in_English = 0;
         public bool Is_changed = false;
     }
@@ -1055,21 +1080,20 @@ namespace src
     internal class SectionLayer : IRenderingElementRelatedInConsoleSize
     {
         public int serial_number { get; set; }
-        public List<SectionLayerTextsAndLenght> texts { get; private set; }
-        public List<List<SectionLayerTextInfo>> texts_info { get; private set; }
+        public List<SectionTextInfoInLine> texts_info { get; private set; }
         public int Total_writed_line_count { get; set; } = 0;
         private int previous_current_y_when_write = 0;
         private int current_x = 0;
         private int current_y = 0;
         private Section parent_section;
         private bool is_fix_current_x = false;
+        private int fix_x_into = 0;
 
         public bool IsClearedCurrently { get; set; } = true;
 
         public SectionLayer(IKeyEvent keyEvent, Section parent_section)
         {
-            texts = new List<SectionLayerTextsAndLenght>();
-            texts_info = new List<List<SectionLayerTextInfo>>();
+            texts_info = new List<SectionTextInfoInLine>();
             this.parent_section = parent_section;
         }
 
@@ -1080,26 +1104,23 @@ namespace src
 
         public int GetLenOfTextsList()
         {
-            return texts.Count;
+            return texts_info.Count;
         }
 
+        //Clearというのは、内部的にはlengthを0にしているだけであって、文字列データは書き換えない.
+        //これによりWriteの時に、以前と同じデータのときに、一文字単位で書き換えをスキップすることができる.
+        //
+        //但し、急にSetCursolでxを10とかにした場合は、10までにあるデータをemptyで埋めることによって、あたかも内部的に
+        //文字列データがClearになっているように見せる.(SetEmptyOnPreviousWritedCharactor()により実装)
         public void Clear()
         {
             current_x = 0;
             current_y = 0;
-            previous_current_y_when_write = 0;
+            is_fix_current_x = false;
             Total_writed_line_count = 0;
-            foreach (var text in texts)
-            {
-                text.sb.Clear();
-            }
             foreach (var info_in_line in texts_info)
             {
-                foreach(var info in info_in_line)
-                {
-                    info.type = CharType.Empty;
-                    info.text_index = 0;
-                }
+                info_in_line.length_in_English = 0;
             }
         }
 
@@ -1114,16 +1135,18 @@ namespace src
             is_fix_current_x = true;
         }
 
-        private bool IsInRangeOfPage()
+        public void UnFixX()
         {
-            return true;
+            is_fix_current_x = false;
         }
 
         private enum SimpleCharType
         {
             None,
             English,
-            Japanese
+            Japanese,
+            ESC,
+            NewLine
         }
 
         private SimpleCharType JudgeCharType(char c)
@@ -1140,31 +1163,31 @@ namespace src
             {
                 return SimpleCharType.Japanese;
             }
+            else if (c == '\u001b')
+            {
+                return SimpleCharType.ESC;
+            }
+            else if (c == '\n')
+            {
+                return SimpleCharType.NewLine;
+            }
 
             return SimpleCharType.None;
         }
 
         private void MakeUpYListsBlanckUntil(int y)
         {
-            while (y > texts.Count - 1)
-            {
-                texts.Add(new SectionLayerTextsAndLenght());
-            }
             while (y > texts_info.Count - 1)
             {
-                texts_info.Add(new List<SectionLayerTextInfo>());
+                texts_info.Add(new SectionTextInfoInLine());
             }
         }
 
         private void MakeUpXListsBlanckUntil(int x)
         {
-            while (x > texts[current_y].sb.Length - 1)
+            while (x > texts_info[current_y].char_info_list.Count - 1)
             {
-                texts[current_y].sb.Append(" ");
-            }
-            while (x > texts_info[current_y].Count - 1)
-            {
-                texts_info[current_y].Add(new SectionLayerTextInfo(texts_info[current_y][x - 1].text_index + 1));
+                texts_info[current_y].char_info_list.Add(new SectionCharInfo());
             }
         }
 
@@ -1180,120 +1203,205 @@ namespace src
                 current_x >= parent_section.Page_starting_x_pos && current_x <= parent_section.GetPageFinishingX())
             );
         }
-        private void SetInfoInEmptyAndProceedX(ref int text_i, ref int x)
-        {
-            texts_info[current_y][x].type = CharType.Empty;
-            texts_info[current_y][x].text_index = text_i;
 
+        private void SetInfo(int x, CharType type, char c, string? color1= null , string? color2 = null)
+        {
+            texts_info[current_y].char_info_list[x].type = type;
+            texts_info[current_y].char_info_list[x].charactor = c;
+            if (color1 != null)
+                texts_info[current_y].char_info_list[x].color_arg1 = color1;
+            if (color2 != null)
+                texts_info[current_y].char_info_list[x].color_arg2 = color2;
+        }
+
+        private void SetInfoInEmptyAndProceedX(ref int x)
+        {
+            SetInfo(x, CharType.Empty, ' ', TUIColorString.None, TUIColorString.None);
             x++;
         }
-        private void SetInfoInEnglishAndProceedX(ref int text_i, ref int x)
-        {
-            texts_info[current_y][x].type = CharType.English;
-            texts_info[current_y][x].text_index = text_i;
 
+        private void SetInfoInEmpty()
+        {
+            SetInfo(current_x, CharType.Empty, ' ', TUIColorString.None, TUIColorString.None);
+        }
+
+        private void SetInfoInEnglishAndProceedX(ref int x, char c, string? color1 = null, string? color2 = null)
+        {
+            SetInfo(x, CharType.Singular, c, color1, color2);
             x++;
         }
-        private void SetInfoInJapaneseAndProceedX(ref int text_i, ref int x)
+        private void SetInfoInJapaneseAndProceedX(ref int x, char c, string color1, string color2)
         {
-            texts_info[current_y][x].type = CharType.JapaneseStart;
-            texts_info[current_y][x + 1].type = CharType.JapaneseEnd;
-
-            texts_info[current_y][x].text_index = text_i;
-            texts_info[current_y][x + 1].text_index = text_i;
-
+            SetInfo(x, CharType.PluralStart, c, color1, color2);
+            SetInfo(x + 1, CharType.PluralEnd, c, color1, color2);
             x += 2;
         }
 
-        private void SetTotalLineCountAndLength()
+        private void SetTotalLineCountAndLength(bool is_write_empty)
         {
+            //set total writed line cout in this section layer 
             if (current_y > Total_writed_line_count - 1)
             {
                 Total_writed_line_count = current_y + 1;
             }
+            //set total writed line cout in parent section
             if (Total_writed_line_count > parent_section.Total_writed_line_count)
             {
                 parent_section.Total_writed_line_count = Total_writed_line_count;
             }
 
-            if (current_y > texts[current_y].length_in_English - 1)
+            if (!is_write_empty)
             {
-                texts[current_y].length_in_English = current_x;
+                //set length in section text info
+                if (current_y > texts_info[current_y].length_in_English - 1)
+                {
+                    texts_info[current_y].length_in_English = current_x;
+                }
+                //set length in parent_section
+                if (texts_info[current_y].length_in_English > parent_section.Length_in_English)
+                {
+                    parent_section.Length_in_English = texts_info[current_y].length_in_English;
+                }
             }
-            if (texts[current_y].length_in_English > parent_section.Length_in_English)
+
+            //by comparing max length
+        }
+
+        private void SetCurrentXandYForWriteLineFn()
+        {
+            current_y++;
+            if (is_fix_current_x)
             {
-                parent_section.Length_in_English = texts[current_y].length_in_English;
+                current_x = 0;
             }
+            else
+            {
+                current_x = fix_x_into;
+            }
+        }
+
+        private void SetEmptyOnPreviousWritedCharactor()
+        {
+            for (int x = texts_info[current_y].length_in_English - 1; x < current_x + 1; x++)
+            {
+                SetInfoInEmpty();
+            }
+        }
+
+        private string JudgeColorNumber(string str, ref int str_i)
+        {
+            char first = '\0';
+            char second = '\0';
+            if (str.Length - 1 != str_i + 1)
+            {
+                first = str[str_i + 1];
+                str_i++;
+            }
+            if (str.Length - 1 != str_i + 1)
+            {
+                second = str[str_i + 1];
+                str_i++;
+            }
+
+            if (first == '0')
+            {
+                return TUIColorString.Reset;
+            }
+            if (first == '3' && second == '0')
+            {
+                return TUIColorString.Black;
+            }
+            if (first == '3' && second == '1')
+            {
+                return TUIColorString.Red;
+            }
+            if (first == '3' && second == '2')
+            {
+                return TUIColorString.Green;
+            }
+            if (first == '4' && second == '7')
+            {
+                return TUIColorString.WriteBack;
+            }
+            return TUIColorString.None;
+        }
+
+        private string ESCProcessAndReturnColor(string str, ref int str_i)
+        {
+            bool IsNumber(int i)
+            {
+                switch (str[i])
+                {
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+
+            //\u00b1
+            if (str[str_i + 1] == '[' && IsNumber(str_i + 2))
+            {
+                str_i += 2;
+                string color = JudgeColorNumber(str, ref str_i);
+                return color;
+            }
+            return TUIColorString.None;
         }
 
         public SectionLayer WriteEmpty(int length)
         {
             MakeUpYListsBlanckUntil(current_y);
-
-            //currentまで一旦.
             MakeUpXListsBlanckUntil(current_x);
 
-            //差分で完全一致な帰る.
-            if (texts_info[current_y][current_y].type != CharType.JapaneseEnd)
-            {
-                bool is_same = true;
-                for (int i = 0, x = current_x; i < length; i++, x++)
-                {
-                    MakeUpXListsBlanckUntil(x);
-                    if (texts_info[current_y][x].type != CharType.Empty)
-                    {
-                        is_same = false;
-                        break;
-                    }
-                }
-                if (is_same)
-                {
-                    current_x += length;
-                    return this;
-                }
-            }
+            SetEmptyOnPreviousWritedCharactor();
 
-            if (length != 0)
-            {
-                texts[current_y].Is_changed = true;
-            }
             parent_section.Is_changed_in_page = IsChangedInPage(length);
 
-            int first_text_i = texts_info[current_y][current_x].text_index;
-            int text_i = first_text_i;
-            int first_add_blanck = 0;
-            int end_add_blanck = 0;
-            if (texts_info[current_y][current_x].type == CharType.JapaneseEnd)
+            bool is_changed_in_line = false;
+            for (int str_i = 0; str_i < length; str_i++)
             {
-                current_x--;
-                SetInfoInEmptyAndProceedX(ref text_i, ref current_x);
-                first_add_blanck++;
-            }
-
-            for (int i = 0; i < length; i++)
-            {
-                SetInfoInEmptyAndProceedX(ref text_i, ref current_x);
-                if (i == length - 1 && texts_info[current_y][current_x].type == CharType.JapaneseStart)
+                SectionCharInfo info = texts_info[current_y].char_info_list[current_x];
+                if (info.type == CharType.Empty)
                 {
-                    end_add_blanck++;
+                    current_x++;
+                    continue;
+                }
+                else if (info.type == CharType.PluralEnd && str_i == 0)
+                {
+                    current_x--;
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorString.None, TUIColorString.None);
+                }
+
+                is_changed_in_line = true;
+
+                SetInfoInEmptyAndProceedX(ref current_x);
+
+                if (str_i == length - 1 && texts_info[current_y].char_info_list[current_x].type == CharType.PluralEnd)
+                {
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorString.None, TUIColorString.None);
                 }
             }
 
-            int end_text_i = texts_info[current_y][current_x].text_index;
-            StringBuilder sb = new StringBuilder();
-            sb.Append(' ', length + first_add_blanck + end_add_blanck);
-            texts[current_y].sb.Remove(first_text_i, end_text_i - first_text_i + 1);
-            texts[current_y].sb.Insert(first_text_i, sb);
-
-            SetTotalLineCountAndLength();
-
+            texts_info[current_y].Is_changed = is_changed_in_line;
+            SetTotalLineCountAndLength(true);
             return this;
         }
 
         public SectionLayer WriteLineEmpty(int length)
         {
             WriteEmpty(length);
-            current_y++;
+            SetCurrentXandYForWriteLineFn();
             return this;
         }
 
@@ -1302,92 +1410,118 @@ namespace src
             MakeUpYListsBlanckUntil(current_y);
             MakeUpXListsBlanckUntil(current_x);
 
-            //もし以前と変更なしなら帰る.
-            if (texts_info[current_y][current_y].type != CharType.JapaneseEnd)
-            {
-                bool is_same = true;
-                int current_x_proceed = current_x;
-                for (int i = 0, index = texts_info[current_y][current_x].text_index; i < str.Length; i++, index++)
-                {
-                    MakeUpXListsBlanckUntil(current_x_proceed);
+            SetEmptyOnPreviousWritedCharactor();
 
-                    if (str[i] != texts[current_y].sb[index] && texts_info[current_y][current_x_proceed].type != CharType.Empty)
-                    {
-                        is_same = false;
-                        break;
-                    }
-                    switch (JudgeCharType(str[i]))
-                    {
-                        case SimpleCharType.English:
-                        case SimpleCharType.None:
-                            current_x_proceed++;
-                            break;
-                        case SimpleCharType.Japanese:
-                            current_x_proceed += 2;
-                            break;
-                    }
-                }
-                if (is_same)
-                    current_x = current_x_proceed;
-                    return this;
-            }
-
-            //以下以前と変更あり.
-            if (str.Length != 0)
-            {
-                texts[current_y].Is_changed = true;
-            }
             parent_section.Is_changed_in_page = IsChangedInPage(str.Length);
 
-
-            int first_text_i = texts_info[current_y][current_x].text_index;
-            int text_i = first_text_i;
-            if (texts_info[current_y][current_x].type == CharType.JapaneseEnd)
+            bool is_changed_in_line = false;
+            string color_arg1 = TUIColorString.None;
+            string color_arg2 = TUIColorString.None;
+            void ResetColorArg()
             {
-                str = " " + str;
-                current_x--;
-                SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
+                if (color_arg2 == TUIColorString.Reset || (color_arg1 == TUIColorString.Reset && color_arg2 == TUIColorString.None))
+                {
+                    color_arg1 = TUIColorString.None;
+                    color_arg2 = TUIColorString.None;
+                }
             }
+            void IfLastProcessForEnglishAndJapenese(int str_i)
+            {
+                if (str_i == str.Length - 1 && texts_info[current_y].char_info_list[current_x].type == CharType.PluralEnd)
+                {
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', color_arg1, color_arg2);
+                }
+            }
+            void IfLastProcessForColor()
+            {
+
+            }
+
             for (int str_i = 0; str_i < str.Length; str_i++)
             {
-                MakeUpXListsBlanckUntil(current_x);
+                //日本語入力の可能性を考慮してcurrent + 1を分までメモリを確保しておいて、index was out of rangeを防ぐ.
+                MakeUpXListsBlanckUntil(current_x + 1);
 
-                char c = str[str_i];
-                switch (JudgeCharType(c))
+                SectionCharInfo info = texts_info[current_y].char_info_list[current_x];
+
+                //もし、処理対象のcharがそこに前書かれていた文字列なら、currentだけ進めて次に進む.
+                if (info.charactor == str[str_i] && info.type == CharType.PluralStart)
+                {
+                    current_x += 2;
+                    continue;
+                }
+                else if (info.charactor == str[str_i] && info.type == CharType.Singular)
+                {
+                    current_x++;
+                    continue;
+                }
+                //日本語の終わりが、初めの時のcurrent_xの場合、日本語の初めの部分を" "で埋める.
+                else if (info.type == CharType.PluralEnd && str_i == 0)
+                {
+                    current_x--;
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorString.None, TUIColorString.None);
+                }
+
+                is_changed_in_line = true;
+
+                switch (JudgeCharType(str[str_i]))
                 {
                     case SimpleCharType.English:
-                        SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
+                    case SimpleCharType.None:
+                        SetInfoInEnglishAndProceedX(ref current_x, str[str_i], color_arg1, color_arg2);
+                        IfLastProcessForColor();
+                        ResetColorArg();
                         break;
 
                     case SimpleCharType.Japanese:
-                        SetInfoInJapaneseAndProceedX(ref text_i, ref current_x);
+                        SetInfoInJapaneseAndProceedX(ref current_x, str[str_i], color_arg1, color_arg2);
+                        ResetColorArg();
                         break;
 
-                    case SimpleCharType.None:
-                        SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
-                        throw new InputedOtherThanEnglishOrJapaneseException("SectionLayerのWrite/WriteLine関数に関して、英語と日本語以外が入力されました。");
+                    case SimpleCharType.ESC:
+                        string color = ESCProcessAndReturnColor(str, ref str_i);
+                        if (color_arg1 == TUIColorString.None)
+                        {
+                            color_arg1 = color;
+                        }
+                        else
+                        {
+                            color_arg2 = color;
+                        }
+                        if (str_i == str.Length - 1)
+                        {
+                            texts_info[current_y].char_info_list[current_x].color_arg1 = color_arg1;
+                            texts_info[current_y].char_info_list[current_x].color_arg2 = color_arg2;
+                        }
+                        break;
+
+                    default:
+                        break;
                 }
 
-                if (str_i == str.Length - 1 && texts_info[current_y][current_x].type == CharType.JapaneseStart)
+                //日本語の終わりが、最後の時のcurrent_xの場合、日本語の終わりの部分を" "で埋める.
+                if (str_i == str.Length - 1 && texts_info[current_y].char_info_list[current_x].type == CharType.PluralEnd)
                 {
-                    str = str + " ";
-                    SetInfoInEnglishAndProceedX(ref text_i, ref current_x);
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', color_arg1, color_arg2);
                 }
             }
-
-            int end_text_i = texts_info[current_y][current_x].text_index;
-            texts[current_y].sb.Remove(first_text_i, end_text_i - first_text_i + 1);
-            texts[current_y].sb.Insert(first_text_i, str);
-
-            SetTotalLineCountAndLength();
-
+            texts_info[current_y].Is_changed = is_changed_in_line;
+            SetTotalLineCountAndLength(false);
             return this;
         }
 
-        public void WriteLine(string str)
+        public SectionLayer WriteLine(string str)
         {
             Write(str);
-            current_y++;
+            SetCurrentXandYForWriteLineFn();
+            return this;
+        }
+
+        public SectionLayer BottunXYSet(Bottun btn)
+        {
+            btn.section_x = current_x;
+            btn.section_y = current_y;
+            return this;
         }
     }
 
@@ -1511,29 +1645,9 @@ namespace src
     //  WriteToThisPerson();
     //  tothis_person_btn.RockOn();
 
-    public class PageQueue
-    {
-
-    }
-
-    public class Page
-    {
-
-    }
-
-    public class BottunSheetIndexer
-    {
-
-        public BottunSheetIndexer()
-        {
-
-        }
-
-
-    }
 
     //
-    public class BottunSheet
+    internal class BottunSheet
     {
         public BottunQ BQ { get; set; }
         private Thread t1;
@@ -1542,7 +1656,7 @@ namespace src
         {
             WritePage = writePage;
             IKeyEvent keyEventHandler = new KeyEvent();
-            BQ = new BottunQ(WritePage, keyEventHandler);
+            BQ = new BottunQ(keyEventHandler);
             t1 = new Thread(BQ.BottunSelect);
         }
 
@@ -1565,7 +1679,7 @@ namespace src
     //ボタンを一つのシート上でキューとして管理。ここでは、ボタンの選択にかかわる処理や、キューに保持しているボタンの要素を変えたりすることができる。
     //キーボード操作はもう一つ独立してクラス作ったら？
 
-    public class BottunQ
+    internal class BottunQ
     {
         private IKeyEvent keyEvent;
         private List<List<Bottun>> bottun_queue = new();
@@ -1573,7 +1687,6 @@ namespace src
         private int bottun_y = 0;
         private int old_x = 0;
         private int old_y = 0;
-        private Action WritePage;
         private bool rocked { get; set; } = false;
         private bool dont_release { get; set; } = false;
 
@@ -1582,9 +1695,8 @@ namespace src
         private int y_length { get; set; } = 0;
         private int x_length { get; set; } = 0;
 
-        public BottunQ(Action writePage, IKeyEvent keyEvent)
+        public BottunQ(IKeyEvent keyEvent)
         {
-            WritePage = writePage;
             this.keyEvent = keyEvent;
         }
 
@@ -1598,48 +1710,56 @@ namespace src
             rocked = false;
         }
 
+        public Bottun GetBottun(int x, int y)
+        {
+            return bottun_queue[y][x];
+        }
+
+        public Bottun GetSelectedBottun()
+        {
+            return bottun_queue[bottun_y][bottun_x];
+        }
+        
         public void AddNewBottun(int y = -1, int x = -1, bool apeal = true, string rabel = "bottun", Action? function = null)
         {
             if (y < 0) y = bottun_queue.Count;
             if (x < 0) x = bottun_queue[y].Count;
-            if (((0 <= y) && (y <= bottun_queue.Count)) && ((0 <= x) && (x <= bottun_queue[y].Count)))
-            {
-                bottun_queue[y].Insert(x, new Bottun(y, x, rabel, apeal));
-                bottun_queue[y][x].Function = function;
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-            }
+            bottun_queue[y].Insert(x, new Bottun(y, x, rabel, apeal));
+            bottun_queue[y][x].Action_when_turned_on = function;
         }
 
         public void DereteBottun(int y = -1, int x = -1)
         {
             if (y < 0) y = bottun_queue.Count - 1;
             if (x < 0) x = bottun_queue[y].Count - 1;
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                bottun_queue[y].RemoveAt(x);
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-            }
+            bottun_queue[y].RemoveAt(x);
         }
 
-        public void AddNewList(int size_of_list, int y = -1, bool apeal = true, string rabel = "bottun", Action? function = null)
+        public void AddNewList(
+            int size_of_list, 
+            int times = 1,
+            int y = -1,
+            bool apeal = true, 
+            string rabel = "bottun", 
+            Action? turned_on = null, 
+            Action? turned_off = null, 
+            Action? turned_selected = null
+            )
         {
-            if (y < 0)
+            for (int t = 0; t < times; t++)
             {
-                y = bottun_queue.Count;
-            }
-            if (0 < size_of_list && 0 <= y && y <= bottun_queue.Count)
-            {
-                bottun_queue.Insert(y, new List<Bottun>());
-                for (int i = 0; i < size_of_list; i++)
+                if (y < 0)
                 {
-                    bottun_queue[y].Add(new Bottun(bottun_queue.Count - 1, i, rabel, apeal));
-                    bottun_queue[y][i].Function = function;
+                    y = bottun_queue.Count;
+                }
+                if (0 < size_of_list && 0 <= y && y <= bottun_queue.Count)
+                {
+                    bottun_queue.Insert(y, new List<Bottun>());
+                    for (int i = 0; i < size_of_list; i++)
+                    {
+                        bottun_queue[y].Add(new Bottun(bottun_queue.Count - 1, i, rabel, apeal));
+                        bottun_queue[y][i].Action_when_turned_on = turned_on;
+                    }
                 }
             }
         }
@@ -1651,101 +1771,59 @@ namespace src
             {
                 y = bottun_queue.Count - 1;
             }
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)))
-            {
-                bottun_queue.RemoveAt(y);
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-            }
+            bottun_queue.RemoveAt(y);
         }
 
-        public void SetCursolTop(int y, int x)
+        public void SetCursolTop(int x, int y)
         {
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                bottun_queue[y][x].console_top = Console.GetCursorPosition().Top;
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-            }
+            bottun_queue[y][x].console_top = Console.GetCursorPosition().Top;
         }
 
-        public void SetFunction(int y, int x, Action function)
+        public void SetSomething(
+            int y,
+            int x, 
+            bool? apeal = null,
+            string? rabel = null,
+            Action? turned_on = null,
+            Action? turned_off = null,
+            Action? turned_selected = null)
         {
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                bottun_queue[y][x].Function = function;
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-            }
+            Bottun bottun = bottun_queue[x][y];
+            if (apeal != null)
+                bottun.apear = (bool)apeal;
+            if (rabel != null)
+                bottun.rabel = rabel;
+            if (turned_on != null)
+                bottun.Action_when_turned_on = turned_on;
+            if (turned_off != null)
+                bottun.Action_when_turned_off = turned_off;
+            if (turned_selected != null)
+                bottun.Action_when_turned_selected = turned_selected;
         }
 
-        public void SetRabel(int y, int x, string rabel)
+        public void SetRabel(int x, int y, string rabel)
         {
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                bottun_queue[y][x].rabel = rabel;
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-            }
+            bottun_queue[y][x].rabel = rabel;
         }
 
-        public void SetApear(int y, int x, bool apear)
+        public void SetApear(int x, int y, bool apear)
         {
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                bottun_queue[y][x].apear = apear;
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-            }
+            bottun_queue[y][x].apear = apear;
         }
 
-        public bool GetOn(int y, int x)
+        public bool GetOn(int x, int y)
         {
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                return bottun_queue[y][x].on;
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-                return false;
-            }
+            return bottun_queue[y][x].on;
         }
 
-        public bool GetSelected(int y, int x)
+        public bool GetSelected(int x, int y)
         {
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                return bottun_queue[y][x].selsected;
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-                return false;
-            }
+            return bottun_queue[y][x].selsected;
         }
 
-        public string GetRabel(int y, int x)
+        public string GetRabel(int x, int y)
         {
-            if (((0 <= y) && (y <= bottun_queue.Count - 1)) && ((0 <= x) && (x <= bottun_queue[y].Count - 1)))
-            {
-                return bottun_queue[y][x].Rabel();
-            }
-            else
-            {
-                Console.WriteLine("------ index error of bottun_queue ------");
-                return "";
-            }
+            return bottun_queue[y][x].Rabel();
         }
 
         public int X()
@@ -1769,10 +1847,20 @@ namespace src
 
         public void Wait()
         {
-            while (keyEvent.up_pressd | keyEvent.down_pressd | keyEvent.right_pressd | keyEvent.left_pressd | keyEvent.space_pressd)
+            while (keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Up)
+                || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Down)
+                || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Left)
+                || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Right)
+                || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Enter))
             {
                 Thread.Sleep(1);
             }
+        }
+
+        private void DoActionWhenSelected()
+        {
+            if (bottun_queue[bottun_y][bottun_x].Action_when_turned_selected != null)
+                bottun_queue[bottun_y][bottun_x].Action_when_turned_selected();
         }
 
         public void UpProcess()
@@ -1790,7 +1878,6 @@ namespace src
             }
             bottun_y--;
             ChangeSelected();
-            WritePage();
         }
 
         public void DownProcess()
@@ -1808,7 +1895,7 @@ namespace src
             }
             bottun_y++;
             ChangeSelected();
-            WritePage();
+            DoActionWhenSelected();
         }
 
         public void LeftSlideProcess()
@@ -1822,7 +1909,7 @@ namespace src
             XYGetOld();
             bottun_x--;
             ChangeSelected();
-            WritePage();
+            DoActionWhenSelected();
         }
 
         public void RightSlideProcess()
@@ -1836,7 +1923,7 @@ namespace src
             XYGetOld();
             bottun_x++;
             ChangeSelected();
-            WritePage();
+            DoActionWhenSelected();
         }
 
         public void UpSelected()
@@ -1894,16 +1981,27 @@ namespace src
                 try
                 {
                     bottun_queue[bottun_y][bottun_x].on = true;
-                    WritePage();
+                    DoActionWhenSelected();
                     bottun_queue[bottun_y][bottun_x].FunctionExcute();
                     some_on_rocked = true;
                 }
                 catch (IndexOutOfRangeException ex)
                 {
-                    WritePage();
+                    DoActionWhenSelected();
                     Console.WriteLine(ex.Message);
                 }
                 Wait();
+            }
+        }
+
+        public void TurnOn(int y, int x)
+        {
+            if (!some_on_rocked)
+            {
+                bottun_queue[y][x].on = true;
+                DoActionWhenSelected();
+                bottun_queue[y][x].FunctionExcute();
+                some_on_rocked = true;
             }
         }
 
@@ -1921,7 +2019,7 @@ namespace src
                 {
                     Console.WriteLine(ex.Message);
                 }
-                WritePage();
+                DoActionWhenSelected();
                 Wait();
             }
         }
@@ -1953,7 +2051,7 @@ namespace src
             {
                 Console.WriteLine(ex.Message);
             }
-            WritePage();
+            DoActionWhenSelected();
             Wait();
         }
 
@@ -1968,35 +2066,34 @@ namespace src
     public class Bottun
     {
         public int? console_top { get; set; } = null;
-
         public int x { get; set; }
-
+        public int section_x { get; set; }
         public int y { get; set; }
+        public int section_y { get; set; }
         public string rabel = "";
         public bool on { get; set; } = false;
-
         public bool selsected { get; set; } = false;
         public bool apear { get; set; } = true;
 
-        public Action? Function { get; set; }
-        public Bottun(int y, int x, string rabel = "bottun", bool apear = true)
+        public Action? Action_when_turned_on { get; set; }
+        public Action? Action_when_turned_off { get; set; }
+        public Action? Action_when_turned_selected { get; set; }
+        public Bottun(int y, int x, string rabel = "bottun", bool apear = true, Action? on_ = null, Action? off_ = null, Action? selected_ = null)
         {
             this.x = x;
             this.y = y;
             this.rabel = rabel;
             this.apear = apear;
-        }
-
-        public void FuncInit(Action function)
-        {
-            this.Function = function;
+            this.Action_when_turned_on = on_;
+            this.Action_when_turned_off = off_;
+            this.Action_when_turned_selected = selected_;
         }
 
         public void FunctionExcute()
         {
-            if (Function != null)
+            if (Action_when_turned_on != null)
             {
-                Function();
+                Action_when_turned_on();
             }
         }
 
@@ -2010,9 +2107,7 @@ namespace src
                 }
                 else if (selsected)
                 {
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.BackgroundColor = ConsoleColor.White;
-                    return "< " + rabel + " >";
+                    return   TUIColorString.Black + TUIColorString.WriteBack + "< " + rabel + " >" + TUIColorString.Reset;
                 }
                 else
                 {
@@ -2107,7 +2202,7 @@ namespace src
         public void Process()
         {
             IKeyEvent keyEvent = new KeyEvent();
-            RenderingForConsole renderingForConsole = new(keyEvent);
+            RenderingClassForConsole renderingForConsole = new(keyEvent);
             
         }
 
@@ -2190,6 +2285,7 @@ namespace src
             BS = new BottunSheet(action);
             string to_rabel = "bbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbbaaaaaaaaaabbbbbbbbbb";
             to_rabel = "bottun";
+            /*
             BS.BQ.AddNewList(4, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(3, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
@@ -2201,9 +2297,10 @@ namespace src
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             BS.BQ.AddNewList(2, function: actiona, rabel: "↓↑");
+            */
             for (int i = 0; i < 10; i++)
             {
-                BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
+                //BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
             }
             /*
             BS.BQ.AddNewList(2, function: actiona, rabel: to_rabel);
