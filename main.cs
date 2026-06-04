@@ -6,8 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;
-using NPOI.HPSF;
-using NPOI.SS.Util;
 using Array = System.Array;
 using Org.BouncyCastle.Bcpg.Sig;
 using static System.Collections.Specialized.BitVector32;
@@ -18,6 +16,7 @@ using NPOI.SS.Formula.Functions;
 using NPOI.OpenXmlFormats.Spreadsheet;
 using System.Windows.Forms;
 using static NPOI.HSSF.Util.HSSFColor;
+using System.Threading.Tasks;
 
 namespace src
 {
@@ -425,7 +424,7 @@ namespace src
     internal class KeyEventHandlerOneThread : KeyEventHandlerElement
     {
 
-        private List<Action>[] actions = new List<Action>[number_of_available_key];
+        private List<Action?>[] actions = new List<Action?>[number_of_available_key];
         private IKeyEvent keyEvent;
         private CancellationTokenSource? _cts;
         public KeyEventHandlerOneThread(IKeyEvent keyEvent)
@@ -433,7 +432,7 @@ namespace src
             this.keyEvent = keyEvent;
         }
 
-        public void SetOneKeyAction(int index, List<Action> arg_actions)
+        public void SetOneKeyAction(int index, List<Action?> arg_actions)
         {
             actions[index] = arg_actions;
         }
@@ -442,13 +441,14 @@ namespace src
         {
             foreach (Action action in actions[(int)keyToIndex])
             {
-                action();
+                if (action != null)
+                   action();
             }
         }
 
-        public void KeyEventHandl(CancellationToken token)
+        public async Task KeyEventHandl(CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
+            while (!token.IsCancellationRequested || true)
             {
                 for (int i = 0; i < KeyEventHandlerElement.number_of_available_key ; i++)
                 {
@@ -457,8 +457,9 @@ namespace src
                         ExecuteActions((KeyToIndex)i);
                     }
                 }
+                keyEvent.ReDefine();
                 //cpu負荷軽減.
-                Thread.Sleep(10);
+                await Task.Delay(10);
             }
         }
 
@@ -565,6 +566,14 @@ namespace src
         private StringBuilder fainal_sb_to_write = new();
         private int console_y_length = 0;
         private int sheet_serial_num = 0;
+        private Dictionary<TUIColorEnum, string> keyValuePairs = new Dictionary<TUIColorEnum, string>
+        {   { TUIColorEnum.Reset, TUIColorString.Reset},
+            {TUIColorEnum.BlackLetter, TUIColorString.BlackLetter },
+            {TUIColorEnum.WriteLetter, TUIColorString.WriteLetter },
+            {TUIColorEnum.GreenLetter, TUIColorString.GreenLetter },
+            {TUIColorEnum.RedLetter, TUIColorString.RedLetter },
+            {TUIColorEnum.WriteBack, TUIColorString.WriteBack }
+        };
 
         public RenderingClassForConsole(IKeyEvent keyEvent)
         {
@@ -619,6 +628,55 @@ namespace src
             sheet_to_render = sheet_q[index];
         }
 
+        private void WriteChar(SectionCharInfo info, ref int text_x, ref int text_y, ref TUIColorEnum color1, ref TUIColorEnum color2)
+        {
+            //noneじゃない、前と同じじゃない、存在するなら
+            if (info.color_arg2 != TUIColorEnum.None && 
+                (color1 != info.color_arg1 && color2 != info.color_arg1) && 
+                keyValuePairs.TryGetValue(color1, out string? color1_str))
+            {
+                foreach (char c in color1_str)
+                {
+                    text_to_write[text_x][text_y] = c;
+                    text_x++;
+                }
+            }
+            color1 = info.color_arg1;
+            if (info.color_arg2 != TUIColorEnum.None && 
+                (color2 != info.color_arg2 && color1 != info.color_arg2) && 
+                keyValuePairs.TryGetValue(color1, out string? color2_str))
+            {
+                foreach (char c in color2_str)
+                {
+                    text_to_write[text_x][text_y] = c;
+                    text_x++;
+                }
+            }
+            color2 = info.color_arg2;
+
+            text_to_write[text_x][text_y] = info.charactor;
+        }
+
+        private void WriteOneSpace(ref int text_x, ref int text_y, ref TUIColorEnum color1, ref TUIColorEnum color2)
+        {
+            //もし前に何かあったら、もしくはResetされていなかったら
+            if (!((color1 == TUIColorEnum.None && color2 == TUIColorEnum.None) || 
+                (
+                 (color1 == TUIColorEnum.Reset && (color2 == TUIColorEnum.None || color2 == TUIColorEnum.Reset)) || 
+                 color2 == TUIColorEnum.Reset))
+                )
+            {
+                foreach (char c in TUIColorString.Reset)
+                {
+                    text_to_write[text_x][text_y] = c;
+                    text_x++;
+                }
+            }
+            color1 = TUIColorEnum.Reset;
+            color2 = TUIColorEnum.None;
+            text_to_write[text_x][text_y] = ' ';
+        }
+
         public void RenderingOnConsole()
         {
             if (sheet_to_render == null)
@@ -637,6 +695,8 @@ namespace src
                 {
                     Section section = sheet_to_render.GetSection(sectionInfoInLine.section_serial_num);
                     int section_y = section.Page_starting_y_pos + sectionInfoInLine.line_serial;
+
+                    //layerを回す.
                     bool no_layer_is_changed = true;
                     foreach (SectionLayer layer in section.layers)
                     {
@@ -646,6 +706,7 @@ namespace src
                             break;
                         }
                     }
+
                     if (!no_layer_is_changed)
                     {
                         no_section_is_changed = false;
@@ -664,12 +725,15 @@ namespace src
                 //このyに入っているsectionを回す.
                 foreach (SectionInfoInLine sectionInfoInLine in sheet_to_render.applicable_sections_in_line[text_to_write_y])
                 {
+                    TUIColorEnum color1 = TUIColorEnum.None;
+                    TUIColorEnum colo2 = TUIColorEnum.None;
+
                     Section section = sheet_to_render.GetSection(sectionInfoInLine.section_serial_num);
                     int section_y = section.Page_starting_y_pos + sectionInfoInLine.line_serial;
 
                     //pageに含まれるxを回して、英字分一文字ずつ書いていく
                     int section_x = section.Page_starting_x_pos;
-                    int section_x_from_zero = 0;
+                    int how_many_chars_did_write = 0;
                     int text_to_write_x = 0;
                     while (section_x < section.Page_starting_x_pos + section.X_span)
                     {
@@ -694,24 +758,34 @@ namespace src
                                 case CharType.Empty:
                                     if (layer_index == 0)
                                     {
-                                        text_to_write[text_to_write_y][text_to_write_x] = ' ';
+                                        WriteOneSpace(ref text_to_write_x, ref text_to_write_y, ref color1, ref colo2);
+                                        section_x++;
+                                        how_many_chars_did_write++;
                                     }
                                     continue;
 
                                 case CharType.Singular:
-                                    text_to_write[text_to_write_y][text_to_write_x] = layer.texts_info[section_y].char_info_list[section_x].charactor;
+                                    WriteChar(layer.texts_info[section_y].char_info_list[section_x], 
+                                        ref text_to_write_x, ref text_to_write_y, 
+                                        ref color1, ref colo2);
                                     section_x++;
+                                    how_many_chars_did_write++;
                                     goto break_layer_for_stmt;
 
                                 case CharType.PluralStart:
                                     if (section_x + 2 > section.Page_starting_x_pos + section.X_span)
                                     {
-                                        text_to_write[text_to_write_y][text_to_write_x] = ' ';
+                                        WriteOneSpace(ref text_to_write_x, ref text_to_write_y, ref color1, ref colo2);
+                                        section_x++;
+                                        how_many_chars_did_write++;
                                     }
                                     else
                                     {
-                                        text_to_write[text_to_write_y][text_to_write_x] = layer.texts_info[section_y].char_info_list[section_x].charactor;
+                                        WriteChar(layer.texts_info[section_y].char_info_list[section_x],
+                                            ref text_to_write_x, ref text_to_write_y,
+                                            ref color1, ref colo2);
                                         section_x += 2;
+                                        how_many_chars_did_write += 2;
                                     }
                                     goto break_layer_for_stmt;
 
@@ -720,13 +794,13 @@ namespace src
 
                             }
                         }
-
                     break_layer_for_stmt:
                         text_to_write_x++;
                     }
+                    //END >> pageに含まれるxを回して、英字分一文字ずつ書いていく
 
                     //余りの空白部分を埋める.
-                    for (int i = 0; i < section.X_span - section_x_from_zero - 1; i++, text_to_write_x++)
+                    for (int i = 0; i < section.X_span - how_many_chars_did_write - 1; i++, text_to_write_x++)
                     {
                         text_to_write[text_to_write_y][text_to_write_x] = ' ';
                     }
@@ -775,7 +849,7 @@ namespace src
         public int serial_number { get; set; }
         private int section_serial_number = 0;
         private List<Section> sections;
-        public List<List<SectionInfoInLine>> applicable_sections_in_line { get; private set; }
+        public List<List<SectionInfoInLine>> applicable_sections_in_line { get; private set; } = new();
         private List<int> section_serial_number_s = new();
         private List<int> section_x_pos_list = new();
         private List<SectionSerialNumberAndXpos> serial_and_xpos = new();
@@ -816,7 +890,7 @@ namespace src
         {
             if (arg_section == null)
             {
-                arg_section = new Section(keyEvent);
+                arg_section = new Section(keyEvent, this);
             }
             arg_section.serial_number = section_serial_number++;
             arg_section.X_pos = x_pos;
@@ -871,6 +945,7 @@ namespace src
     internal class Section : IRenderingElementRelatedInConsoleSize
     {
         public int serial_number { get; set; }
+        public Sheet parent_sheet;
         public int X_pos { get; set; }
         public int X_span { get; set; }
         public int Y_pos { get; set; }
@@ -888,10 +963,11 @@ namespace src
         public List<SectionLayer> layers { get; set; }
         private IKeyEvent keyEvent;
 
-        public Section(IKeyEvent keyEvent)
+        public Section(IKeyEvent keyEvent, Sheet parent_sheet)
         {
             layers = new List<SectionLayer>();
             this.keyEvent = keyEvent;
+            this.parent_sheet = parent_sheet;
         }
 
         public void ReSetConsoleSize()
@@ -1034,15 +1110,10 @@ namespace src
 
     public static class TUIColorString
     {
-        static private HashSet<string> set = new() {
-            TUIColorString.Reset,
-            TUIColorString.Red,
-            TUIColorString.Green,
-            TUIColorString.WriteBack
-        };
-        public const string Black = "\u001b[30m";
-        public const string Red = "\u001b[31m";
-        public const string Green = "\u001b[32m";
+        public const string BlackLetter = "\u001b[30m";
+        public const string RedLetter = "\u001b[31m";
+        public const string GreenLetter = "\u001b[32m";
+        public const string WriteLetter = "";
         public const string Reset = "\u001b[0m";
         public const string WriteBack = "\u001b[47m";
         public const string None = "";
@@ -1064,8 +1135,8 @@ namespace src
 
     internal class SectionCharInfo
     {
-        public string color_arg1 = TUIColorString.None;
-        public string color_arg2 = TUIColorString.None;
+        public TUIColorEnum color_arg1 = TUIColorEnum.None;
+        public TUIColorEnum color_arg2 = TUIColorEnum.None;
         public CharType type = CharType.Empty;
         public char charactor = '\0';
     }
@@ -1204,33 +1275,33 @@ namespace src
             );
         }
 
-        private void SetInfo(int x, CharType type, char c, string? color1= null , string? color2 = null)
+        private void SetInfo(int x, CharType type, char c, TUIColorEnum? color1= null , TUIColorEnum? color2 = null)
         {
             texts_info[current_y].char_info_list[x].type = type;
             texts_info[current_y].char_info_list[x].charactor = c;
             if (color1 != null)
-                texts_info[current_y].char_info_list[x].color_arg1 = color1;
+                texts_info[current_y].char_info_list[x].color_arg1 = (TUIColorEnum)color1;
             if (color2 != null)
-                texts_info[current_y].char_info_list[x].color_arg2 = color2;
+                texts_info[current_y].char_info_list[x].color_arg2 = (TUIColorEnum)color2;
         }
 
         private void SetInfoInEmptyAndProceedX(ref int x)
         {
-            SetInfo(x, CharType.Empty, ' ', TUIColorString.None, TUIColorString.None);
+            SetInfo(x, CharType.Empty, ' ', TUIColorEnum.None, TUIColorEnum.None);
             x++;
         }
 
         private void SetInfoInEmpty()
         {
-            SetInfo(current_x, CharType.Empty, ' ', TUIColorString.None, TUIColorString.None);
+            SetInfo(current_x, CharType.Empty, ' ', TUIColorEnum.None, TUIColorEnum.None);
         }
 
-        private void SetInfoInEnglishAndProceedX(ref int x, char c, string? color1 = null, string? color2 = null)
+        private void SetInfoInEnglishAndProceedX(ref int x, char c, TUIColorEnum? color1 = null, TUIColorEnum? color2 = null)
         {
             SetInfo(x, CharType.Singular, c, color1, color2);
             x++;
         }
-        private void SetInfoInJapaneseAndProceedX(ref int x, char c, string color1, string color2)
+        private void SetInfoInJapaneseAndProceedX(ref int x, char c, TUIColorEnum color1, TUIColorEnum color2)
         {
             SetInfo(x, CharType.PluralStart, c, color1, color2);
             SetInfo(x + 1, CharType.PluralEnd, c, color1, color2);
@@ -1288,7 +1359,7 @@ namespace src
             }
         }
 
-        private string JudgeColorNumber(string str, ref int str_i)
+        private TUIColorEnum JudgeColorNumber(string str, ref int str_i)
         {
             char first = '\0';
             char second = '\0';
@@ -1305,28 +1376,28 @@ namespace src
 
             if (first == '0')
             {
-                return TUIColorString.Reset;
+                return TUIColorEnum.Reset;
             }
             if (first == '3' && second == '0')
             {
-                return TUIColorString.Black;
+                return TUIColorEnum.BlackLetter;
             }
             if (first == '3' && second == '1')
             {
-                return TUIColorString.Red;
+                return TUIColorEnum.RedLetter;
             }
             if (first == '3' && second == '2')
             {
-                return TUIColorString.Green;
+                return TUIColorEnum.GreenLetter;
             }
             if (first == '4' && second == '7')
             {
-                return TUIColorString.WriteBack;
+                return TUIColorEnum.WriteBack;
             }
-            return TUIColorString.None;
+            return TUIColorEnum.None;
         }
 
-        private string ESCProcessAndReturnColor(string str, ref int str_i)
+        private TUIColorEnum ESCProcessAndReturnColor(string str, ref int str_i)
         {
             bool IsNumber(int i)
             {
@@ -1353,10 +1424,10 @@ namespace src
             if (str[str_i + 1] == '[' && IsNumber(str_i + 2))
             {
                 str_i += 2;
-                string color = JudgeColorNumber(str, ref str_i);
+                TUIColorEnum color = JudgeColorNumber(str, ref str_i);
                 return color;
             }
-            return TUIColorString.None;
+            return TUIColorEnum.None;
         }
 
         public SectionLayer WriteEmpty(int length)
@@ -1380,7 +1451,7 @@ namespace src
                 else if (info.type == CharType.PluralEnd && str_i == 0)
                 {
                     current_x--;
-                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorString.None, TUIColorString.None);
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorEnum.None, TUIColorEnum.None);
                 }
 
                 is_changed_in_line = true;
@@ -1389,7 +1460,7 @@ namespace src
 
                 if (str_i == length - 1 && texts_info[current_y].char_info_list[current_x].type == CharType.PluralEnd)
                 {
-                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorString.None, TUIColorString.None);
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorEnum.None, TUIColorEnum.None);
                 }
             }
 
@@ -1415,14 +1486,15 @@ namespace src
             parent_section.Is_changed_in_page = IsChangedInPage(str.Length);
 
             bool is_changed_in_line = false;
-            string color_arg1 = TUIColorString.None;
-            string color_arg2 = TUIColorString.None;
+            TUIColorEnum color_arg1 = TUIColorEnum.None;
+            TUIColorEnum color_arg2 = TUIColorEnum.None;
+            //もし、Resetが来たら、後継のcolorをnoneにする.
             void ResetColorArg()
             {
-                if (color_arg2 == TUIColorString.Reset || (color_arg1 == TUIColorString.Reset && color_arg2 == TUIColorString.None))
+                if (color_arg2 == TUIColorEnum.Reset || (color_arg1 == TUIColorEnum.Reset && color_arg2 == TUIColorEnum.None))
                 {
-                    color_arg1 = TUIColorString.None;
-                    color_arg2 = TUIColorString.None;
+                    color_arg1 = TUIColorEnum.None;
+                    color_arg2 = TUIColorEnum.None;
                 }
             }
             void IfLastProcessForEnglishAndJapenese(int str_i)
@@ -1459,7 +1531,7 @@ namespace src
                 else if (info.type == CharType.PluralEnd && str_i == 0)
                 {
                     current_x--;
-                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorString.None, TUIColorString.None);
+                    SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorEnum.None, TUIColorEnum.None);
                 }
 
                 is_changed_in_line = true;
@@ -1479,8 +1551,8 @@ namespace src
                         break;
 
                     case SimpleCharType.ESC:
-                        string color = ESCProcessAndReturnColor(str, ref str_i);
-                        if (color_arg1 == TUIColorString.None)
+                        TUIColorEnum color = ESCProcessAndReturnColor(str, ref str_i);
+                        if (color_arg1 == TUIColorEnum.None)
                         {
                             color_arg1 = color;
                         }
@@ -1521,130 +1593,11 @@ namespace src
         {
             btn.section_x = current_x;
             btn.section_y = current_y;
+            btn.section_serial = parent_section.serial_number;
+            btn.sheet_serial = parent_section.parent_sheet.serial_number;
             return this;
         }
     }
-
-    //if (previous_length > now_rength)
-    //  if (layer(now_layer_num - 1))
-    //      前のレイヤーにあるテキストで短くなった分をうめる
-    //  else
-    //      空白で同じく埋める
-
-
-    //変更有セクション中の変更有レイヤーのテキストのみを描画する。複数ある場合は回す.
-
-    //ではページはどうする？
-    //class Bottun ->
-    //in SetSelected()
-    //if (Bottun.line is out of page limit line)
-    //  make page_y (Bottun.line / page_lien_span (then if % != 0 this += 1))
-    //if (Bottun.pos is out of page pos line)
-    //  make page_x (Bottun.pos / page_pos_span (then if % != 0 this += 1))
-
-    //if 
-
-    //ボタン内にセクションでの行番号と開始位置、スパンを保持させておき、
-    //それを引数として、layer.write(bottun.section_line_num, bottun.section_pos_num + span, ...)みたいにする。
-    //layer(1).fix_pos(bottun.section_pos_num)
-    //layer(1).set_line(bottun.section_line_num)
-    //
-    //以下をまとめて、write_after_select_element_bottun()
-    //layer(1).write()...
-    //layer(1).write()...
-    //
-    //cnosole.Write();
-    //
-    //BottunsAfterSelectElement.RockOn();
-    //
-
-    //start
-    //
-    //console.StartKeyHanle();
-    //console.UseThreadTo(console);
-    //
-    //in console
-    //if (up_pressed)
-    //x++;
-    //if (enter_pressed)
-    //console.UseThreadTo(current_sheet);
-    //
-    //in sheet
-    //if (enter_pressed)
-    //console.UseThreadTo(current_section);
-    //
-    //
-
-    //public main_memu
-
-    //public void ReWriteToMemuSection()
-    //  Section to_menu_section = tounament_sheet.Section(0);
-    //  to_memu_section.Layer(0).Write(to_memu_bottun, line_num : 0, how_many_space_between_buttons : 4);
-
-    //public void ReWriteInputSection()
-
-    //public ReWriteAll()
-    //  ReWriteToMemuSection();
-    //  ReWriteToInputSection();
-
-    //
-    //KeyEvent key_evnet = new KeyEvent(max_thread : 3);
-
-    //key_event.ClearAction();
-    //key_event.SetAction("W", to_menu.Up(key_event), ReWrite())
-    //key_event.SetAction("S", ...)
-    //key_event.SetAction("Shift", "W", to_menu.Up())
-
-    //Sheet tounament_sheet = new();
-    //tounament_sheet.AddSection(times : 3)
-    //to_memu_buttuns.AddButtun("戻る", Action action = Finish()).AddButtun("説明", )
-    //to_memu_buttuns.WriteWhenSelected(ReWriteInputSection)
-    //tounament_buttuns.AddButtun("＋", Action action = AddFunction()), Action action = WriteMainInput())
-    //for (int i ...)
-    //  add_person_buttns.AddBtn(dic[i], Action action = AddProcess())
-    //ReWriteAll();
-
-    //public WriteMainInput()
-
-    //public void AddFunction()
-    //  WriteAddFunction();
-    //  add_person_btns.RockOn();
-
-    //public void WriteAddFunction()
-    //  input_section.Layer(1).SetStartPointOfCursol(input_buttun_write.Selected());
-    //  input_section.Layer(1).RockStartXOfcursol(input_button_weite.Selecter());
-    //
-    //  for (int i...)
-    //      layer.Write(add_person_buttun);
-
-    //public void WriteToThisPerson()
-    //  input_section.Layer(1).SetStartPointOfCursol(input_buttun_write.Selected());
-    //  input_section.Layer(1).RockStartXOfcursol(input_button_weite.Selecter());
-    //
-    //  Layer layer = input_section.Layer(1);
-    //  layer.Clear();
-    //  layer.WeiteLine("-", 8)
-    //  layer.WriteLine("| ", tothis_person_buttns.btn(0, 0), " |");
-    //  layer.WriteLine("| ", tothis_person_buttns.btn(0, 1), " |");
-    //  layer.WeiteLine("-", 8)
-    //
-
-    //public void AddProcess()
-    //  added_person_list[dic(rabel)] = true
-    //  person_btns.AddBtns(rabel, PersonDeletMenu(), WriteMainFunction);
-    //  person_btns.AddBtns("+", AddEventInPerson());
-
-    //public void AddEventInPerson()
-    //  WriteAddEventInPerson();
-    //  event_btns.RockOn();
-
-    //public AddEventProcess()
-    //  person_btns[index].AddBtns(rabel, EventDeletOrChange(), )
-
-    //public void ToThisPerson()
-    //  WriteToThisPerson();
-    //  tothis_person_btn.RockOn();
-
 
     //
     internal class BottunSheet
@@ -1654,10 +1607,7 @@ namespace src
         private Action WritePage;
         public BottunSheet(Action writePage)
         {
-            WritePage = writePage;
-            IKeyEvent keyEventHandler = new KeyEvent();
-            BQ = new BottunQ(keyEventHandler);
-            t1 = new Thread(BQ.BottunSelect);
+
         }
 
         public void StartHandlingKeyEvent()
@@ -1681,6 +1631,7 @@ namespace src
 
     internal class BottunQ
     {
+        private CSharpConsoleTUI cSharpConsoleTUI;
         private IKeyEvent keyEvent;
         private List<List<Bottun>> bottun_queue = new();
         private int bottun_x = 0;
@@ -1692,12 +1643,15 @@ namespace src
 
         private bool some_on_rocked = false;
 
+        public bool Is_move_page_when_bottun_xy_is_out_of_page_range { get; set; } = true;
+
         private int y_length { get; set; } = 0;
         private int x_length { get; set; } = 0;
 
-        public BottunQ(IKeyEvent keyEvent)
+        public BottunQ(CSharpConsoleTUI cSharpConsoleTUI)
         {
-            this.keyEvent = keyEvent;
+            this.cSharpConsoleTUI = cSharpConsoleTUI;
+            keyEvent = cSharpConsoleTUI.keyEvent;
         }
 
         public void BeLocked()
@@ -1720,15 +1674,22 @@ namespace src
             return bottun_queue[bottun_y][bottun_x];
         }
         
-        public void AddNewBottun(int y = -1, int x = -1, bool apeal = true, string rabel = "bottun", Action? function = null)
+        public void AddNewBottun(
+            int x = -1,
+            int y = -1,
+            bool apeal = true,
+            string rabel = "bottun",
+            Action? turned_on = null,
+            Action? turned_off = null,
+            Action? turned_selected = null
+            )
         {
             if (y < 0) y = bottun_queue.Count;
             if (x < 0) x = bottun_queue[y].Count;
-            bottun_queue[y].Insert(x, new Bottun(y, x, rabel, apeal));
-            bottun_queue[y][x].Action_when_turned_on = function;
+            bottun_queue[y].Insert(x, new Bottun(y, x, rabel, apeal, turned_on, turned_off, turned_selected));
         }
 
-        public void DereteBottun(int y = -1, int x = -1)
+        public void DereteBottun(int x = -1, int y = -1)
         {
             if (y < 0) y = bottun_queue.Count - 1;
             if (x < 0) x = bottun_queue[y].Count - 1;
@@ -1788,7 +1749,7 @@ namespace src
             Action? turned_off = null,
             Action? turned_selected = null)
         {
-            Bottun bottun = bottun_queue[x][y];
+            Bottun bottun = bottun_queue[y][x];
             if (apeal != null)
                 bottun.apear = (bool)apeal;
             if (rabel != null)
@@ -1845,7 +1806,7 @@ namespace src
             return bottun_queue[y].Count;
         }
 
-        public void Wait()
+        public async void Wait()
         {
             while (keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Up)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Down)
@@ -1853,7 +1814,7 @@ namespace src
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Right)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Enter))
             {
-                Thread.Sleep(1);
+                await Task.Delay(2);
             }
         }
 
@@ -1861,6 +1822,43 @@ namespace src
         {
             if (bottun_queue[bottun_y][bottun_x].Action_when_turned_selected != null)
                 bottun_queue[bottun_y][bottun_x].Action_when_turned_selected();
+        }
+
+        private void MovePageConsideringBottunXY()
+        {
+            if (Is_move_page_when_bottun_xy_is_out_of_page_range)
+            {
+                int section_x = bottun_queue[bottun_y][bottun_x].section_x;
+                int last_section_x = section_x + bottun_queue[bottun_y][bottun_x].rabel.Length - 1;
+                int section_y = bottun_queue[bottun_y][bottun_x].section_y;
+                Section section = cSharpConsoleTUI.renderingForConsole
+                    .GetSheet(bottun_queue[bottun_y][bottun_x].sheet_serial)
+                    .GetSection(bottun_queue[bottun_y][bottun_x].section_serial);
+                while (
+                    (section_x < section.Page_starting_x_pos) ||
+                    (last_section_x <= section.GetPageFinishingX()) ||
+                    (section_y < section.Page_starting_y_pos) ||
+                    (section_y > section.GetPageFinishingY())
+                    )
+                {
+                    if (section_x < section.Page_starting_x_pos)
+                    {
+                        section.RightSlidePage(for_key: false);
+                    }
+                    if (last_section_x <= section.GetPageFinishingX())
+                    {
+                        section.LeftSlidePage(for_key: false);
+                    }
+                    if (section_y < section.Page_starting_y_pos)
+                    {
+                        section.DownPage(for_key: false);
+                    }
+                    if (section_y > section.GetPageFinishingY())
+                    {
+                        section.UpPage(for_key: false);
+                    }
+                }
+            }
         }
 
         public void UpProcess()
@@ -1877,7 +1875,9 @@ namespace src
                 bottun_x = bottun_queue[bottun_y - 1].Count - 1;
             }
             bottun_y--;
+            MovePageConsideringBottunXY();
             ChangeSelected();
+            DoActionWhenSelected();
         }
 
         public void DownProcess()
@@ -1894,6 +1894,7 @@ namespace src
                 bottun_x = bottun_queue[bottun_y + 1].Count - 1;
             }
             bottun_y++;
+            MovePageConsideringBottunXY();
             ChangeSelected();
             DoActionWhenSelected();
         }
@@ -1908,6 +1909,7 @@ namespace src
 
             XYGetOld();
             bottun_x--;
+            MovePageConsideringBottunXY();
             ChangeSelected();
             DoActionWhenSelected();
         }
@@ -1922,6 +1924,7 @@ namespace src
 
             XYGetOld();
             bottun_x++;
+            MovePageConsideringBottunXY();
             ChangeSelected();
             DoActionWhenSelected();
         }
@@ -1950,28 +1953,28 @@ namespace src
             Wait();
         }
 
-        public void FastUpSelected()
+        public async void FastUpSelected()
         {
             UpProcess();
-            Thread.Sleep(500);
+            await Task.Delay(500);
         }
 
-        public void FastDownSelected()
+        public async void FastDownSelected()
         {
             DownProcess();
-            Thread.Sleep(500);
+            await Task.Delay(500);
         }
 
-        public void FastLeftSlideSelected()
+        public async void FastLeftSlideSelected()
         {
             LeftSlideProcess();
-            Thread.Sleep(500);
+            await Task.Delay(500);
         }
 
-        public void FastRightSlideSelected()
+        public async void FastRightSlideSelected()
         {
             RightSlideProcess();
-            Thread.Sleep(500);
+            await Task.Delay(500);
         }
 
         public void TurnOnToKeyEvent()
@@ -2067,8 +2070,10 @@ namespace src
     {
         public int? console_top { get; set; } = null;
         public int x { get; set; }
-        public int section_x { get; set; }
         public int y { get; set; }
+        public int sheet_serial { get; set; }
+        public int section_serial { get; set; }
+        public int section_x { get; set; }
         public int section_y { get; set; }
         public string rabel = "";
         public bool on { get; set; } = false;
@@ -2107,7 +2112,7 @@ namespace src
                 }
                 else if (selsected)
                 {
-                    return   TUIColorString.Black + TUIColorString.WriteBack + "< " + rabel + " >" + TUIColorString.Reset;
+                    return   TUIColorString.BlackLetter + TUIColorEnum.WriteBack + "< " + rabel + " >" + TUIColorString.Reset;
                 }
                 else
                 {
