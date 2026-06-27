@@ -246,7 +246,7 @@ namespace src
                     }
                 }
                 //cpu負荷軽減.
-                await Task.Delay(10);
+                Thread.Sleep(10);
 
                 //Console.WriteLine("??"+serial_number+"??");
             }
@@ -290,10 +290,11 @@ namespace src
             thread_list.Add(t);
         }
 
-        public void AddAction(int thread_index, KeyToIndex key_to_index, params Action[] actions)
+        public KeyEventHandler AddAction(int thread_index, KeyToIndex key_to_index, params Action[] actions)
         {
             var list = new List<Action>(actions);
             thread_list[thread_index].SetOneKeyAction((int)key_to_index, list);
+            return this;
         }
 
         public void ActionClear(int? thread_index = null)
@@ -367,17 +368,17 @@ namespace src
 
     internal class ColorManegementInCharBufferContext
     {
-        TUIColorEnum _color1 = TUIColorEnum.None;
-        TUIColorEnum _color2 = TUIColorEnum.None;
+        public TUIColorEnum _color1 { get; private set; } = TUIColorEnum.None;
+        public TUIColorEnum _color2 { get; private set; } = TUIColorEnum.None;
         TUIColorEnum _color_to_one_space = TUIColorEnum.None;
         StringBuilder stringBuilder = new StringBuilder();
         private Dictionary<TUIColorEnum, string> keyValuePairs = new Dictionary<TUIColorEnum, string>
-        {   {TUIColorEnum.None, TUIColorString.Reset + "reset"},
-            {TUIColorEnum.BlackLetter, TUIColorString.BlackLetter + "black_l" },
+        {   {TUIColorEnum.None, TUIColorString.Reset},
+            {TUIColorEnum.BlackLetter, TUIColorString.BlackLetter },
             {TUIColorEnum.WriteLetter, TUIColorString.WriteLetter },
             {TUIColorEnum.GreenLetter, TUIColorString.GreenLetter },
             {TUIColorEnum.RedLetter, TUIColorString.RedLetter },
-            {TUIColorEnum.WriteBack, TUIColorString.WriteBack + "write_back"}
+            {TUIColorEnum.WriteBack, TUIColorString.WriteBack}
         };
 
         public ColorManegementInCharBufferContext()
@@ -394,9 +395,16 @@ namespace src
         public StringBuilder ReturnColorStrToWriteChar(TUIColorEnum color_arg1, TUIColorEnum color_arg2)
         {
             //noneじゃない、前と同じじゃない、存在するなら
+
+            //Console.WriteLine("color management");
+            //Console.WriteLine("color_arg : " +  color_arg1 + ", " + color_arg2 );
+            //Console.WriteLine("color1, 2 : " + _color1 + ", " + _color2);
+
+            stringBuilder.Clear();
             if (color_arg1 != _color1 &&
                 keyValuePairs.TryGetValue(color_arg1, out string? color1_str))
             {
+                //Console.WriteLine("one is approved");
                 stringBuilder.Append(color1_str);
                 _color_to_one_space = color_arg1;
             }
@@ -404,6 +412,7 @@ namespace src
             if ((color_arg2 != _color1 && color_arg2 != _color2) &&
                 keyValuePairs.TryGetValue(color_arg2, out string? color2_str))
             {
+                //Console.WriteLine("two is approved");
                 stringBuilder.Append(color2_str);
                 _color_to_one_space = color_arg2;
             }
@@ -429,6 +438,7 @@ namespace src
         public Sheet? sheet_to_render { get; private set; } = null;
         public int Console_y { get; private set; } = 0;
         public int Console_x { get; set; } = 0;
+        public int Last_console_y { get; private set;} = 0;
 
         private int previous_console_x_len = 0;
         private int previous_console_y_len = 0;
@@ -445,7 +455,16 @@ namespace src
             charBufferXContext = new CharBufferXContext(this, applicableSectionContext, charBufferXBySectionContext);
         }
 
-        internal void MakeUpTheRestOfSpaceForSection(int console_width)
+        private void MakeUpTheRestOfSpaceCore(int times)
+        {
+            if (charBufferXBySectionContext.GetColor1() != TUIColorEnum.None && charBufferXBySectionContext.GetColor2() != TUIColorEnum.None)
+            {
+                text_to_write[Console_y].Append(TUIColorString.Reset);
+            }
+            text_to_write[Console_y].Append('\\', times);
+        }
+
+        private void MakeUpTheRestOfSpaceForSection(int console_width)
         {
             if (charBufferXContext.charBufferBySectionContex.section_to_render == null ||
                 Console_x + charBufferXContext.charBufferBySectionContex.section_to_render.X_span - charBufferXContext.charBufferBySectionContex.how_many_chars_did_write > console_width
@@ -455,16 +474,16 @@ namespace src
             }
             else
             {
-                text_to_write[Console_y].Append('\\', charBufferXContext.charBufferBySectionContex.section_to_render.X_span - charBufferXContext.charBufferBySectionContex.how_many_chars_did_write);
+                MakeUpTheRestOfSpaceCore(charBufferXContext.charBufferBySectionContex.section_to_render.X_span - charBufferXContext.charBufferBySectionContex.how_many_chars_did_write);
             }
         }
 
-        internal void MakeUpTheRestOfSpaceForConsole(int console_width)
+        private void MakeUpTheRestOfSpaceForConsole(int console_width)
         {
             //Console.WriteLine("-------------------------------");
             //Console.WriteLine("Console_y : " + Console_y + ", Console_x : "+ Console_x + ", console_width : " + console_width);
             //Console.WriteLine("-------------------------------");
-            text_to_write[Console_y].Append('\\', console_width - Console_x);
+            MakeUpTheRestOfSpaceCore(console_width - Console_x);
         }
 
         private bool IsNoSectionChangedInALine(int text_to_write_y, int console_width)
@@ -473,10 +492,12 @@ namespace src
             //されていたら次のコンソール行へ.
             //このyに入っているsectionを回して、全てのセクションが変更なし、か、一つでも変更有かどうかを調べる.
             bool no_section_is_changed = true;
+
             //Console.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " + text_to_write_y);
             //Console.WriteLine(text_to_write_y);
             //Console.WriteLine(sheet_to_render.applicableSectionListinLine.SectionLists.Count);
             //Console.WriteLine(console_width);
+
             foreach (SectionInfoInLine sectionInfoInLine in sheet_to_render.applicableSectionListinLine.SectionLists[text_to_write_y])
             {
                 Section section = sheet_to_render.GetSection(sectionInfoInLine.section_serial_num);
@@ -524,12 +545,14 @@ namespace src
 
             CharBufferContextResult charBufferContextResult = new CharBufferContextResult();
             bool up_to_date = false;
+            Last_console_y = 0;
             Console_y = -1;
 
             while (true)
             {
                 //Console.WriteLine("console : " + Console_x + ", " + Console_y);
                 //Console.Write(charBufferContextResult.Go_to_next_y + ", ");
+
                 //セクションごとののresult
                 CharBufferBySectionContextResult? resultBySection = charBufferContextResult.charBufferBySectionContextResult;
                 if (resultBySection != null)
@@ -575,13 +598,17 @@ namespace src
                         {
                             break;
                         }
+
                         //Console.WriteLine("================================");
                         //Console.WriteLine(console_len_is_changed + ", " + (IsNoSectionChangedInALine(Console_y, console_y_length) == false));
                         //Console.WriteLine("================================");
+
                         if (console_len_is_changed || false == IsNoSectionChangedInALine(Console_y, console_y_length))
                         {
                             //Console.WriteLine("clearing");
+
                             text_to_write[Console_y].Clear();
+                            Last_console_y = Console_y;
                             break;
                         }
                     }
@@ -731,7 +758,6 @@ namespace src
             return Consume(do_up_tp_date_y);
         }
 
-
         internal CharBufferContextResult Consume(bool be_done_up_tp_date)
         {
             CharBufferBySectionContextResult charBufferBySectionContextResult = new();
@@ -801,12 +827,23 @@ namespace src
         public int Section_x { get; private set; } = 0;
         public int Section_y { get; private set; } = 0;
         public int how_many_chars_did_write { get; private set; } = 0;
+        private int Max_layar_length_in_section = 0;
         private CharBufferBySectionContextResult result = new();
         public Section? section_to_render { get; private set; } = null;
 
         public CharBufferXBySectionContext(CharBufferContext charBufferContext)
         {
             this.charBufferContext = charBufferContext;
+        }
+
+        public TUIColorEnum GetColor1()
+        {
+            return colorManegementInCharBufferContext._color1;
+        }
+
+        public TUIColorEnum GetColor2()
+        {
+            return colorManegementInCharBufferContext._color2;
         }
 
         private void ClearResult()
@@ -828,6 +865,19 @@ namespace src
 
         }
 
+        private int CalcuMaxLayarLengthInSection()
+        {
+            int Max_layar_length_in_section = 0;
+            foreach (SectionLayer sectionLayer in section_to_render.layers)
+            {
+                if (sectionLayer.Total_writed_line_count > Section_y && sectionLayer.texts_info[Section_y].length_in_English > Max_layar_length_in_section)
+                {
+                    Max_layar_length_in_section = sectionLayer.texts_info[Section_y].length_in_English;
+                }
+            }
+            return Max_layar_length_in_section;
+        }
+
         internal CharBufferBySectionContextResult Consume(bool do_up_tp_date_section, Section? section = null, int? section_x = null, int? section_y = null)
         {
             ClearResult();
@@ -843,6 +893,10 @@ namespace src
                     SetResult(go_to_next_section: true, make_up_the_rest_of_space: true);
                     return result;
                 }
+                else
+                {
+                    Max_layar_length_in_section = CalcuMaxLayarLengthInSection();
+                }
             }
 
             //Console.WriteLine("ConsumeTotalLine - 3");
@@ -854,10 +908,12 @@ namespace src
             //Console.WriteLine("ConsumeCharInCurrentY - 1");
             //Console.Write("section_x : " + Section_x);
             //Console.Write(", opposed : " + section_to_render.Length_in_English_List[Section_y]);
-            if (Section_x > section_to_render.Length_in_English_List[Section_y] - 1)
+
+            if (Section_x > Max_layar_length_in_section - 1)
             {
                 //Console.WriteLine("consume char in current y");
                 //Console.WriteLine("ConsumeCharInCurrentY - 1");
+
                 SetResult(
                     go_to_next_section: true,
                     make_up_the_rest_of_space: true);
@@ -872,6 +928,7 @@ namespace src
             for (int i = 0, layer_index = section_to_render.layers.Count - 1; i < section_to_render.layers.Count; i++, layer_index--)
             {
                 //Console.WriteLine("ConsumeCharInCurrentY - 2");
+
                 layer = section_to_render.GetSectionLayer(layer_index);
 
                 //このlayerにx, yに文字がなかったら(lengthからオーバーしてたら)continu(section.section_layer.texts_infoのインデックスアクセスの安全装置)
@@ -890,6 +947,8 @@ namespace src
                 //Console.WriteLine(sectionCharInfo.type);
                 //Console.WriteLine("\'" + sectionCharInfo.charactor + "\'");
 
+                //Console.WriteLine("==================================");
+                //Console.WriteLine(charBufferContext.Console_x + ", " + charBufferContext.Console_y);
                 switch (charType)
                 {
                     case CharType.Empty:
@@ -961,36 +1020,11 @@ namespace src
         private IKeyEvent keyEvent;
         private List<StringBuilder> text_to_write = new();
         private StringBuilder fainal_sb_to_write = new();
-        private int console_y_length;
-        private int console_x_length;
+        public int console_y_length { get; private set; }
+        public int console_x_length { get; private set; }
         private int sheet_serial_num = 0;
         private CharBufferContext charBufferContext;
         private ResultCharInfo? resultCharInfo;
-
-        private static readonly object _consoleLock = new();
-
-        void SafeRender(StringBuilder sb)
-        {
-            lock (_consoleLock)
-            {
-                if (Console.IsOutputRedirected)
-                {
-                    Console.WriteLine(sb.ToString());
-                    return;
-                }
-
-                try
-                {
-                    Console.SetCursorPosition(0, 0);
-                    Console.Write(sb.ToString());
-                }
-                catch (IOException)
-                {
-                    // フォールバック: カーソル操作不可なら通常出力
-                    Console.WriteLine(sb.ToString());
-                }
-            }
-        }
 
         public RenderingClassForConsole(IKeyEvent keyEvent)
         {
@@ -1027,7 +1061,7 @@ namespace src
         {
             if (arg_sheet == null)
             {
-                arg_sheet = new Sheet(keyEvent);
+                arg_sheet = new Sheet(keyEvent, this);
             }
             arg_sheet.serial_number = sheet_serial_num++;
 
@@ -1045,7 +1079,7 @@ namespace src
         {
             for (int i = 0; i < times; i++)
             {
-                Sheet sheet = new Sheet(keyEvent);
+                Sheet sheet = new Sheet(keyEvent, this);
                 sheet.SetApplicableSectionsInLineCount(console_y_length);
                 sheet_q.Add(sheet);
             }
@@ -1061,14 +1095,22 @@ namespace src
             sheet_to_render = sheet_q[index];
         }
 
+        private int count = 0;
+
         public void RenderingOnConsole()
         {
-            Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            //Console.Clear;
+            count++;
+            //Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            if (count == 3)
+            {
+                //Environment.Exit(0);
+            }
+            //Console.Clear();
+
             charBufferContext.Integration(sheet_to_render, text_to_write, console_y_length, console_x_length);
 
-            /*
-            for (int i = 0; i < sheet_to_render.GetSection(0).GetSectionLayer(0).texts_info.Count; i++)
+            
+            /*for (int i = 0; i < sheet_to_render.GetSection(0).GetSectionLayer(0).texts_info.Count; i++)
             {
                 for (int ii = 0; ii < sheet_to_render.GetSection(0).GetSectionLayer(0).texts_info[i].char_info_list.Count; ii++)
                 {
@@ -1078,6 +1120,7 @@ namespace src
                 }
             }
             */
+            
 
 
 
@@ -1091,16 +1134,20 @@ namespace src
                 }
                 fainal_sb_to_write.Append(text_to_write[i]);
 
+                //if (charBufferContext.Last_console_y == i)
+                //{
+                //    fainal_sb_to_write.Append(TUIColorString.Reset);
+                //}
+
                 if (i != console_y_length - 1)
                 {
                     fainal_sb_to_write.Append("\n");
                 }
             }
 
-            SafeRender(fainal_sb_to_write);
+            Console.SetCursorPosition(0, 0);
+            Console.Write(fainal_sb_to_write);
         }
-
-
     }
 
     internal class SectionInfoInLine
@@ -1130,16 +1177,18 @@ namespace src
         public int serial_number { get; set; }
         private int section_serial_number = 0;
         private List<Section> sections;
+        public RenderingClassForConsole parents_render_class { get; private set; }
         public ApplicableSectionListInLine applicableSectionListinLine { get; private set; } = new();
         private List<int> section_serial_number_s = new();
         private List<int> section_x_pos_list = new();
         private List<SectionSerialNumberAndXpos> serial_and_xpos = new();
         private IKeyEvent keyEvent;
 
-        public Sheet(IKeyEvent keyEvent)
+        public Sheet(IKeyEvent keyEvent, RenderingClassForConsole parents_render_class)
         {
             sections = new List<Section>();
             this.keyEvent = keyEvent;
+            this.parents_render_class = parents_render_class;
         }
 
         public void SetApplicableSectionsInLineCount(int to_this_length)
@@ -1311,11 +1360,12 @@ namespace src
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Right)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Enter))
             {
-                Thread.Sleep(1);
+                Thread.Sleep(30);
             }
         }
         public void UpPage(bool for_key)
         {
+            Console.WriteLine("up");
             int previous_page_y = Page_starting_y_pos;
             if (Page_starting_y_pos != 0)
             {
@@ -1332,11 +1382,16 @@ namespace src
             }
             if (for_key)
             {
+                if (Is_changed_in_page)
+                {
+                    parent_sheet.parents_render_class.RenderingOnConsole();
+                }
                 Wait();
             }
         }
         public void DownPage(bool for_key)
         {
+            Console.WriteLine("down");
             int previous_page_y = Page_starting_y_pos;
             Page_starting_y_pos += Y_span;
             if (Page_starting_y_pos + Y_span > Total_writed_line_count)
@@ -1350,6 +1405,10 @@ namespace src
             }
             if (for_key)
             {
+                if (Is_changed_in_page)
+                {
+                    parent_sheet.parents_render_class.RenderingOnConsole();
+                }
                 Wait();
             }
         }
@@ -1443,6 +1502,150 @@ namespace src
         public bool Is_changed = false;
     }
 
+    internal class ColorParser
+    {
+        private class StrStreamer
+        {
+            private string? str = null;
+            public int str_i { get; private set; }
+            public char? current_char { get; private set; }
+            public StrStreamer()
+            {
+
+            }
+
+            public void SetElement(string arg_str, int arg_str_i)
+            {
+                str = arg_str;
+                str_i = arg_str_i;
+            }
+
+            public char? Consume()
+            {
+                //Console.WriteLine("consume");
+                if (str_i != str.Length)
+                {
+                    //Console.WriteLine("!!");
+                    str_i++;
+                    //Console.WriteLine("\'" + str[str_i - 1] + "\'");
+                    return str[str_i - 1];
+                }
+                else
+                {
+                    //Console.WriteLine("??");
+                    return null;
+                }
+            }
+        }
+
+        private StrStreamer streamer = new StrStreamer();
+        public ColorParser()
+        {
+
+        }
+
+        internal TUIColorEnum? Parse(string str, int str_i)
+        {
+            streamer.SetElement(str, str_i);
+            streamer.Consume(); //\u001b.
+
+            char? c = streamer.Consume();
+            //Console.WriteLine("1c : " + c);
+            if (c == '[')
+            {
+                //Console.WriteLine("[");
+                return ParseTheFirstDigit();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private TUIColorEnum? ParseTheFirstDigit()
+        {
+            char? c = streamer.Consume();
+            //Console.WriteLine("2c : " + c);
+            if (c == '0')
+            {
+                //Console.WriteLine("0");
+                return ParseM(TUIColorEnum.Reset);
+            }
+            else if (c == '3')
+            {
+                //Console.WriteLine("3");
+                return ParseThreeToTheSecondDigit();
+            }
+            else if (c == '4')
+            {
+                //Console.WriteLine("4");
+                return ParseFourToTheSecondDigit();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private TUIColorEnum? ParseThreeToTheSecondDigit()
+        {
+            char? c = streamer.Consume();
+            //Console.WriteLine("31c : " + c);
+            if (c == '0')
+            {
+                //Console.WriteLine("0");
+                return ParseM(TUIColorEnum.BlackLetter);
+            }
+            else if (c == '1')
+            {
+                //Console.WriteLine("1");
+                return ParseM(TUIColorEnum.RedLetter);
+            }
+            else if (c == '2')
+            {
+                //Console.WriteLine("2");
+                return ParseM(TUIColorEnum.GreenLetter);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private TUIColorEnum? ParseFourToTheSecondDigit()
+        {
+            char? c = streamer.Consume();
+            //Console.WriteLine("32c : " + c);
+            if (c == '7')
+            {
+                //Console.WriteLine("7");
+                return ParseM(TUIColorEnum.WriteBack);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private TUIColorEnum? ParseM(TUIColorEnum retun_enum)
+        {
+            if (streamer.Consume() == 'm')
+            {
+                //Console.WriteLine("m");
+                return retun_enum;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public int StrI()
+        {
+            return streamer.str_i;
+        }
+    }
+
     internal class SectionLayer : IRenderingElementRelatedInConsoleSize
     {
         public int serial_number { get; set; }
@@ -1455,7 +1658,7 @@ namespace src
         private bool is_fix_current_x = false;
         private int fix_x_into = 0;
         private ColorInputHelper color_input_helper = new();
-
+        private ColorParser colorParser = new();
         public bool IsClearedCurrently { get; set; } = true;
 
         public SectionLayer(IKeyEvent keyEvent, Section parent_section)
@@ -1583,9 +1786,17 @@ namespace src
             texts_info[current_y].char_info_list[x].type = type;
             texts_info[current_y].char_info_list[x].charactor = c;
             if (color1 != null)
+            {
+                //Console.WriteLine("CCCCCCCCCCOOOOOOOOOOLLLLLLLOOOOOOOORRRRRRR");
+                //Console.WriteLine((TUIColorEnum)color1);
                 texts_info[current_y].char_info_list[x].color_arg1 = (TUIColorEnum)color1;
+            }
             if (color2 != null)
+            {
+                //Console.WriteLine("CCCCCCCCCCOOOOOOOOOOLLLLLLLOOOOOOOORRRRRRR");
+                //Console.WriteLine((TUIColorEnum)color2);
                 texts_info[current_y].char_info_list[x].color_arg2 = (TUIColorEnum)color2;
+            }
         }
 
         private void SetInfoInEmptyAndProceedX(ref int x)
@@ -1669,86 +1880,20 @@ namespace src
             }
         }
 
-        private TUIColorEnum? JudgeColorNumber(string str, ref int str_i)
-        {
-            char first = '\0';
-            char second = '\0';
-            if (str.Length - 1 != str_i)
-            {
-                first = str[str_i];
-                str_i++;
-            }
-            if (str.Length - 1 != str_i)
-            {
-                second = str[str_i];
-                str_i++;
-            }
-
-            Console.WriteLine("first : " + first);
-            Console.WriteLine("second: " + second);
-            if (first == '0')
-            {
-                str_i--;
-                Console.WriteLine("0");
-                return TUIColorEnum.Reset;
-            }
-            if (first == '3' && second == '0')
-            {
-                Console.WriteLine("30");
-                return TUIColorEnum.BlackLetter;
-            }
-            if (first == '3' && second == '1')
-            {
-                Console.WriteLine("31");
-                return TUIColorEnum.RedLetter;
-            }
-            if (first == '3' && second == '2')
-            {
-                Console.WriteLine("32");
-                return TUIColorEnum.GreenLetter;
-            }
-            if (first == '4' && second == '7')
-            {
-                Console.WriteLine("47");
-                return TUIColorEnum.WriteBack;
-            }
-
-            Console.WriteLine("other");
-            return null;
-        }
-
         private TUIColorEnum? ESCProcessAndReturnColor(string str, ref int str_i)
         {
-            bool IsNumber(int i)
+            int i_back_up = str_i + 1;
+            TUIColorEnum? result = colorParser.Parse(str, str_i);
+            if (result == null)
             {
-                switch (str[i])
-                {
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        return true;
-
-                    default:
-                        return false;
-                }
+                str_i = i_back_up;
             }
-
-            //\u00b1
-            Console.WriteLine(str[str_i + 1] + ", " + str[str_i + 2]);
-            if (str[str_i + 1] == '[' && IsNumber(str_i + 2))
+            else
             {
-                str_i += 2;
-                TUIColorEnum? color = JudgeColorNumber(str, ref str_i);
-                return color;
+                str_i = colorParser.StrI();
+                str_i--;//今一個次のiで、forの次のサイクルで++またされるから、一個ひいとく
             }
-            return null;
+            return result;
         }
 
         public SectionLayer WriteEmpty(int length)
@@ -1809,25 +1954,34 @@ namespace src
 
             MakeUpGapBetweenCurrentXandLengthByEnpty();
 
-            color_input_helper.SetPreviousColor(current_x == 0 ? TUIColorEnum.None : texts_info[current_y].char_info_list[current_x - 1].color_arg1,
-                current_x == 0 ? TUIColorEnum.None : texts_info[current_y].char_info_list[current_x - 1].color_arg2);
+            //color_input_helper.SetPreviousColor(current_x == 0 ? TUIColorEnum.None : texts_info[current_y].char_info_list[current_x - 1].color_arg1,
+            //    current_x == 0 ? TUIColorEnum.None : texts_info[current_y].char_info_list[current_x - 1].color_arg2);
 
             parent_section.Is_changed_in_page = IsChangedInPage(str.Length);
 
             bool is_changed_in_line = false;
 
+            //Console.WriteLine("$$$$$$$$$$$");
+            //Console.WriteLine(str);
+            //Console.WriteLine("$$$$$$$$$$$");
+
             for (int str_i = 0; str_i < str.Length; str_i++)
             {
+                //Console.WriteLine("####################");
+                //Console.WriteLine(str_i);
+                //Console.WriteLine("current_x : " + current_x);
+
                 //日本語入力の可能性を考慮してcurrent + 1を分までメモリを確保しておいて、index was out of rangeを防ぐ.
                 MakeUpXListsBlanckUntil(current_x + 1);
 
                 SectionCharInfo info = texts_info[current_y].char_info_list[current_x];
 
                 //もし、処理対象のcharがそこに前書かれていた文字列なら、currentだけ進めて次に進む.
-                Console.WriteLine("\'" + info.charactor + "\' == " + "\'" + str[str_i] + "\'" + " && " + info.type);
+                //Console.WriteLine("\'" + info.charactor + "\' == " + "\'" + str[str_i] + "\'" + " && " + info.type);
+
                 if (info.charactor == str[str_i] && info.type == CharType.PluralStart)
                 {
-                    Console.WriteLine("japanese equal");
+                    //Console.WriteLine("japanese equal");
                     if (info.color_arg1 != color_input_helper.previous_color1 || info.color_arg2 != color_input_helper.previous_color2)
                     {
                         is_changed_in_line = true;
@@ -1839,7 +1993,7 @@ namespace src
                 }
                 else if (info.charactor == str[str_i] && info.type == CharType.Singular)
                 {
-                    Console.WriteLine("English equal");
+                    //Console.WriteLine("English equal");
                     if (info.color_arg1 != color_input_helper.previous_color1 || info.color_arg2 != color_input_helper.previous_color2)
                     {
                         is_changed_in_line = true;
@@ -1856,7 +2010,7 @@ namespace src
                     SetInfoInEnglishAndProceedX(ref current_x, ' ', TUIColorEnum.None, TUIColorEnum.None);
                 }
 
-                Console.WriteLine("is_changed_in_line");
+                //Console.WriteLine("is_changed_in_line");
                 is_changed_in_line = true;
 
                 switch (JudgeCharType(str[str_i]))
@@ -1877,11 +2031,17 @@ namespace src
                         TUIColorEnum? color = ESCProcessAndReturnColor(str, ref str_i);
                         color_input_helper.ThisColorWasWrited(color);
 
-                        Console.WriteLine("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-                        Console.WriteLine("finaly : " + color);
-                        Console.WriteLine("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                        //Console.WriteLine("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                        //Console.WriteLine("end color");
+                        //Console.WriteLine(color_input_helper.previous_color1 + ", " + color_input_helper.previous_color2);
+                        //Console.WriteLine(current_x);
+                        //Console.WriteLine(str_i);
+                        //Console.WriteLine(str.Length);
+                        //Console.WriteLine(str_i != str.Length ? str[str_i] : "EOL");
+                        //Console.WriteLine(color == null ? "null" : color.ToString());
+                        //Console.WriteLine("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
-                        if (str_i == str.Length - 1)
+                        if (str_i >= str.Length - 1)
                         {
                             texts_info[current_y].char_info_list[current_x].color_arg1 = color_input_helper.previous_color1;
                             texts_info[current_y].char_info_list[current_x].color_arg2 = color_input_helper.previous_color2;
@@ -1895,7 +2055,7 @@ namespace src
 
                 //日本語の終わりが、最後の時のcurrent_xの場合、日本語の終わりの部分を" "で埋める.
                 MakeUpXListsBlanckUntil(current_x);
-                if (str_i == str.Length - 1 && texts_info[current_y].char_info_list[current_x].type == CharType.PluralEnd)
+                if (str_i >= str.Length - 1 && texts_info[current_y].char_info_list[current_x].type == CharType.PluralEnd)
                 {
                     SetInfoInEnglishAndProceedX(ref current_x, ' ', color_input_helper.previous_color1, color_input_helper.previous_color1);
                 }
@@ -1949,6 +2109,7 @@ namespace src
 
             if (arg_color == TUIColorEnum.Reset)
             {
+                //Console.WriteLine("RRRRRRRREEEEEEEEEESSSSSSSSSSEEEEEEEEEETTTTTTTTTT");
                 previous_color1 = TUIColorEnum.None;
                 previous_color2 = TUIColorEnum.None;
                 return;
@@ -1956,11 +2117,13 @@ namespace src
 
             if (is_one)
             {
+                //Console.WriteLine("is_one!!!!!!!!!!!!");
                 previous_color1 = (TUIColorEnum)arg_color;
                 is_one = false;
             }
             else
             {
+                //Console.WriteLine("is_two!!!!!!!!!!!!");
                 previous_color2 = (TUIColorEnum)arg_color;
                 is_one = true;
             }
@@ -2179,15 +2342,16 @@ namespace src
             return bottun_queue[y].Count;
         }
 
-        public async void Wait()
+        public void Wait()
         {
+            Console.WriteLine(keyEvent.GetIsPressedArrayByIndex(KeyToIndex.S));
             while (keyEvent.GetIsPressedArrayByIndex(KeyToIndex.W)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.A)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.S)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.D)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.Enter))
             {
-                await Task.Delay(2);
+                Thread.Sleep(30);
             }
         }
 
