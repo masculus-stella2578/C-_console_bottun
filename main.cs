@@ -56,7 +56,7 @@ namespace src
     {
         public RenderingClassForConsole renderingForConsole { get; private set; }
         public KeyEventHandler keyEventHandler { get; private set; }
-        public IKeyEvent keyEvent { get; private set; }
+        public KeyEvent keyEvent { get; private set; }
 
         public CSharpConsoleTUI()
         {
@@ -96,7 +96,7 @@ namespace src
         const int VK_D = 0x44;
         const int VK_Q = 0x51;
         const int VK_E = 0x45;
-        private bool[] Is_pressed_array_current = new bool[KeyEventHandlerElement.number_of_available_key];
+        internal bool[] Is_pressed_array_current = new bool[KeyEventHandlerElement.number_of_available_key];
         private bool[] Is_pressed_array_next = new bool[KeyEventHandlerElement.number_of_available_key];
         private bool stop_process = false;
         private CancellationTokenSource? _cts;
@@ -136,7 +136,7 @@ namespace src
                 var temp = Is_pressed_array_current;
                 Is_pressed_array_current = Is_pressed_array_next;
                 Is_pressed_array_next = temp;
-                Thread.Sleep(10);
+                Thread.Sleep(50);
             }
         }
 
@@ -188,10 +188,10 @@ namespace src
     {
 
         private List<Action?>[] actions = new List<Action?>[number_of_available_key];
-        private IKeyEvent keyEvent;
+        private KeyEvent keyEvent;
         private CancellationTokenSource? _cts;
         public int serial_number { get; set; }
-        public KeyEventHandlerOneThread(IKeyEvent keyEvent)
+        public KeyEventHandlerOneThread(KeyEvent keyEvent)
         {
             this.keyEvent = keyEvent;
             for (int i = 0; i < actions.Length; i++)
@@ -240,7 +240,7 @@ namespace src
                 {
                     //Console.WriteLine("!!" + serial_number + "!!");
 
-                    if (keyEvent.GetIsPressedArrayByIndex((KeyToIndex)i))
+                    if (keyEvent.Is_pressed_array_current[i])
                     {
                         ExecuteActions((KeyToIndex)i);
                     }
@@ -276,8 +276,8 @@ namespace src
         private int mux_index_of_thread = 0;
         private int max_thread_num = 0;
         private int serial_for_thread = 0;
-        private IKeyEvent keyEvent;
-        public KeyEventHandler(int max_thread_num, IKeyEvent keyEvent)
+        private KeyEvent keyEvent;
+        public KeyEventHandler(int max_thread_num, KeyEvent keyEvent)
         {
             this.max_thread_num = max_thread_num;
             this.keyEvent = keyEvent;
@@ -366,6 +366,7 @@ namespace src
         public StringBuilder stringBuilder = new StringBuilder();
     }
 
+    //前に書かれた色から、次かく色を受け取って、それに応じて色文字コードを返す.
     internal class ColorManegementInCharBufferContext
     {
         public TUIColorEnum _color1 { get; private set; } = TUIColorEnum.None;
@@ -389,7 +390,7 @@ namespace src
         public void ReStartFromBeginning()
         {
             _color1 = TUIColorEnum.None;
-            _color1 = TUIColorEnum.None;
+            _color2 = TUIColorEnum.None;
         }
 
         public StringBuilder ReturnColorStrToWriteChar(TUIColorEnum color_arg1, TUIColorEnum color_arg2)
@@ -434,6 +435,8 @@ namespace src
 
     internal class CharBufferContext
     {
+        private const char space_char = ' ';
+
         private List<StringBuilder>? text_to_write = null;
         public Sheet? sheet_to_render { get; private set; } = null;
         public int Console_y { get; private set; } = 0;
@@ -443,13 +446,15 @@ namespace src
         private int previous_console_x_len = 0;
         private int previous_console_y_len = 0;
 
+        private ColorManegementInCharBufferContext colorManegementInCharBufferContext;
         private CharBufferXContext charBufferXContext;
         private ApplicableSectionListInLineContext applicableSectionContext;
         private CharBufferXBySectionContext charBufferXBySectionContext;
 
         public CharBufferContext()
         {
-            charBufferXBySectionContext = new CharBufferXBySectionContext(this);
+            colorManegementInCharBufferContext = new();
+            charBufferXBySectionContext = new CharBufferXBySectionContext(this, colorManegementInCharBufferContext);
 
             applicableSectionContext = new ApplicableSectionListInLineContext(this);
             charBufferXContext = new CharBufferXContext(this, applicableSectionContext, charBufferXBySectionContext);
@@ -457,11 +462,10 @@ namespace src
 
         private void MakeUpTheRestOfSpaceCore(int times)
         {
-            if (charBufferXBySectionContext.GetColor1() != TUIColorEnum.None && charBufferXBySectionContext.GetColor2() != TUIColorEnum.None)
-            {
-                text_to_write[Console_y].Append(TUIColorString.Reset);
-            }
-            text_to_write[Console_y].Append('\\', times);
+            //空白埋めは色リセット状態でかかないといけない.
+            text_to_write[Console_y].Append(
+                colorManegementInCharBufferContext.ReturnColorStrToWriteChar(TUIColorEnum.None, TUIColorEnum.None));
+            text_to_write[Console_y].Append(space_char, times);
         }
 
         private void MakeUpTheRestOfSpaceForSection(int console_width)
@@ -503,13 +507,19 @@ namespace src
                 Section section = sheet_to_render.GetSection(sectionInfoInLine.section_serial_num);
                 int section_y = section.Page_starting_y_pos + sectionInfoInLine.line_serial;
 
+                if (section.Page_pos_is_changed)
+                {
+                    no_section_is_changed = false;
+                    break;
+                }
+
                 //layerを回す.
                 bool no_layer_is_changed = true;
                 foreach (SectionLayer layer in section.layers)
                 {
                     if (layer.texts_info.Count - 1 < section_y)
                         continue;
-                    if (layer.texts_info[section_y].Is_changed)
+                    if (layer.texts_info[section_y].Is_changed_by_writing)
                     {
                         //Console.WriteLine("IsNoSectionChanched - 1");
                         no_layer_is_changed = false;
@@ -537,6 +547,7 @@ namespace src
         internal void Integration(Sheet arg_sheet, List<StringBuilder> arg_text_to_write, int console_y_length, int console_x_length)
         {
             bool is_first_time = true;
+            colorManegementInCharBufferContext.ReStartFromBeginning();
             bool console_len_is_changed = (previous_console_x_len != console_x_length || previous_console_y_len != console_y_length);
 
             sheet_to_render = arg_sheet;
@@ -822,7 +833,7 @@ namespace src
     internal class CharBufferXBySectionContext
     {
         private CharBufferContext charBufferContext;
-        private ColorManegementInCharBufferContext colorManegementInCharBufferContext = new();
+        private ColorManegementInCharBufferContext colorManegementInCharBufferContext;
 
         public int Section_x { get; private set; } = 0;
         public int Section_y { get; private set; } = 0;
@@ -831,9 +842,10 @@ namespace src
         private CharBufferBySectionContextResult result = new();
         public Section? section_to_render { get; private set; } = null;
 
-        public CharBufferXBySectionContext(CharBufferContext charBufferContext)
+        public CharBufferXBySectionContext(CharBufferContext charBufferContext, ColorManegementInCharBufferContext colorManegementInCharBufferContext)
         {
             this.charBufferContext = charBufferContext;
+            this.colorManegementInCharBufferContext = colorManegementInCharBufferContext;
         }
 
         public TUIColorEnum GetColor1()
@@ -1291,7 +1303,7 @@ namespace src
         public int Y_pos { get; set; }
         public int Y_span { get; set; }
 
-        public bool Is_changed_in_page { get; set; }
+        public bool Page_pos_is_changed { get; private set; }
 
         public int Page_starting_y_pos { get; set; }
         public int Page_starting_x_pos { get; set; }
@@ -1365,7 +1377,7 @@ namespace src
         }
         public void UpPage(bool for_key)
         {
-            Console.WriteLine("up");
+            //Console.WriteLine("up");
             int previous_page_y = Page_starting_y_pos;
             if (Page_starting_y_pos != 0)
             {
@@ -1378,20 +1390,18 @@ namespace src
 
             if (previous_page_y != Page_starting_y_pos)
             {
-                Is_changed_in_page = true;
-            }
-            if (for_key)
-            {
-                if (Is_changed_in_page)
+                Page_pos_is_changed = true;
+                if (for_key && Page_pos_is_changed)
                 {
                     parent_sheet.parents_render_class.RenderingOnConsole();
+                    Page_pos_is_changed = false;
+                    Wait();
                 }
-                Wait();
             }
         }
         public void DownPage(bool for_key)
         {
-            Console.WriteLine("down");
+            //Console.WriteLine("down");
             int previous_page_y = Page_starting_y_pos;
             Page_starting_y_pos += Y_span;
             if (Page_starting_y_pos + Y_span > Total_writed_line_count)
@@ -1401,15 +1411,13 @@ namespace src
 
             if (previous_page_y != Page_starting_y_pos)
             {
-                Is_changed_in_page = true;
-            }
-            if (for_key)
-            {
-                if (Is_changed_in_page)
+                Page_pos_is_changed = true;
+                if (for_key && Page_pos_is_changed)
                 {
                     parent_sheet.parents_render_class.RenderingOnConsole();
+                    Page_pos_is_changed = false;
+                    Wait();
                 }
-                Wait();
             }
         }
         public void LeftSlidePage(bool for_key)
@@ -1426,11 +1434,13 @@ namespace src
 
             if (previous_x_pos != Page_starting_x_pos)
             {
-                Is_changed_in_page = true;
-            }
-            if (for_key)
-            {
-                Wait();
+                Page_pos_is_changed = true;
+                if (for_key && Page_pos_is_changed)
+                {
+                    parent_sheet.parents_render_class.RenderingOnConsole();
+                    Page_pos_is_changed = false;
+                    Wait();
+                }
             }
         }
         public void RightSlidePage(bool for_key)
@@ -1444,11 +1454,13 @@ namespace src
 
             if (previous_x_pos != Page_starting_x_pos)
             {
-                Is_changed_in_page = true;
-            }
-            if (for_key)
-            {
-                Wait();
+                Page_pos_is_changed = true;
+                if (for_key && Page_pos_is_changed)
+                {
+                    parent_sheet.parents_render_class.RenderingOnConsole();
+                    Page_pos_is_changed = false;
+                    Wait();
+                }
             }
         }
     }
@@ -1499,7 +1511,7 @@ namespace src
     {
         public List<SectionCharInfo> char_info_list = new();
         public int length_in_English = 0;
-        public bool Is_changed = false;
+        public bool Is_changed_by_writing = false;
     }
 
     internal class ColorParser
@@ -1691,7 +1703,7 @@ namespace src
             foreach (var info_in_line in texts_info)
             {
                 info_in_line.length_in_English = 0;
-                info_in_line.Is_changed = false;
+                info_in_line.Is_changed_by_writing = false;
             }
             color_input_helper.ResetWhenClear();
         }
@@ -1766,19 +1778,6 @@ namespace src
             {
                 texts_info[current_y].char_info_list.Add(new SectionCharInfo());
             }
-        }
-
-        private bool IsChangedInPage(int length)
-        {
-            //if parent_section have ever been changed &&
-            //if current_y is in range of page
-            return
-            (
-                parent_section.Is_changed_in_page == false &&
-                length != 0 &&
-                (current_y >= parent_section.Page_starting_y_pos && current_y <= parent_section.GetPageFinishingY() &&
-                current_x >= parent_section.Page_starting_x_pos && current_x <= parent_section.GetPageFinishingX())
-            );
         }
 
         private void SetInfo(int x, CharType type, char c, TUIColorEnum? color1 = null, TUIColorEnum? color2 = null)
@@ -1905,8 +1904,6 @@ namespace src
 
             color_input_helper.SetPreviousColor(TUIColorEnum.None, TUIColorEnum.None);
 
-            parent_section.Is_changed_in_page = IsChangedInPage(length);
-
             bool is_changed_in_line = false;
             for (int str_i = 0; str_i < length; str_i++)
             {
@@ -1934,7 +1931,7 @@ namespace src
 
             if (is_changed_in_line)
             {
-                texts_info[current_y].Is_changed = is_changed_in_line;
+                texts_info[current_y].Is_changed_by_writing = is_changed_in_line;
             }
             SetTotalLineCountAndLength(true);
             return this;
@@ -1956,8 +1953,6 @@ namespace src
 
             //color_input_helper.SetPreviousColor(current_x == 0 ? TUIColorEnum.None : texts_info[current_y].char_info_list[current_x - 1].color_arg1,
             //    current_x == 0 ? TUIColorEnum.None : texts_info[current_y].char_info_list[current_x - 1].color_arg2);
-
-            parent_section.Is_changed_in_page = IsChangedInPage(str.Length);
 
             bool is_changed_in_line = false;
 
@@ -2063,7 +2058,7 @@ namespace src
 
             if (is_changed_in_line)
             {
-                texts_info[current_y].Is_changed = is_changed_in_line;
+                texts_info[current_y].Is_changed_by_writing = is_changed_in_line;
             }
             SetTotalLineCountAndLength(false);
             return this;
@@ -2344,7 +2339,8 @@ namespace src
 
         public void Wait()
         {
-            Console.WriteLine(keyEvent.GetIsPressedArrayByIndex(KeyToIndex.S));
+            //Console.WriteLine(keyEvent.GetIsPressedArrayByIndex(KeyToIndex.S));
+
             while (keyEvent.GetIsPressedArrayByIndex(KeyToIndex.W)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.A)
                 || keyEvent.GetIsPressedArrayByIndex(KeyToIndex.S)
@@ -2357,11 +2353,12 @@ namespace src
 
         private void DoActionWhenSelected()
         {
-            Console.WriteLine("do_action");
+            //Console.WriteLine("do_action");
             if (bottun_queue[bottun_y][bottun_x].Action_when_turned_selected != null)
                 bottun_queue[bottun_y][bottun_x].Action_when_turned_selected();
             else
-                Console.WriteLine("ohh my god");
+                ;
+                //Console.WriteLine("ohh my god");
         }
 
         private void MovePageConsideringBottunXY()
@@ -2409,7 +2406,7 @@ namespace src
 
         public void UpProcess()
         {
-            Console.WriteLine(bottun_x + ", " + bottun_y);
+            //Console.WriteLine(bottun_x + ", " + bottun_y);
             if (rocked)
                 return;
 
@@ -2429,7 +2426,7 @@ namespace src
 
         public void DownProcess()
         {
-            Console.WriteLine(bottun_x + ", " + bottun_y);
+            //Console.WriteLine(bottun_x + ", " + bottun_y);
             if (rocked)
                 return;
 
@@ -2449,7 +2446,7 @@ namespace src
 
         public void LeftSlideProcess()
         {
-            Console.WriteLine(bottun_x + ", " + bottun_y);
+            //Console.WriteLine(bottun_x + ", " + bottun_y);
             if (rocked)
                 return;
 
@@ -2465,7 +2462,7 @@ namespace src
 
         public void RightSlideProcess()
         {
-            Console.WriteLine(bottun_x + ", " + bottun_y);
+            //Console.WriteLine(bottun_x + ", " + bottun_y);
             if (rocked)
                 return;
 
