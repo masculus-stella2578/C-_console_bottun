@@ -1,0 +1,4004 @@
+====================
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+0, 5
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+5, 5
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+0, 8
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ち'
+ccccccccccccccccccccccccccccccccccc
+5, 8
+====================
+y - 2 : ち
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ば'
+ccccccccccccccccccccccccccccccccccc
+0, 11
+====================
+y - 2 : ば
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 11
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+0, 14
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+5, 14
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ち'
+ccccccccccccccccccccccccccccccccccc
+0, 17
+====================
+y - 2 : ち
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'に'
+ccccccccccccccccccccccccccccccccccc
+5, 17
+====================
+y - 2 : に
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+0, 20
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+5, 20
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+0, 23
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 23
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'に'
+ccccccccccccccccccccccccccccccccccc
+0, 26
+====================
+y - 2 : に
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 26
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+0, 29
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+5, 29
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ん\\\こ\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\は\\\ち\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ば\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\こ\\\は\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ち\\\に\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ん\\\こ\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\は\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\に\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\こ\\\は\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\====================
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+0, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 1, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+1, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'<'
+ccccccccccccccccccccccccccccccccccc
+2, 1
+====================
+y - 2 : <
+appli - 2
+ConsumeTotalLine - 3
+section_x : 3, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'<'
+ccccccccccccccccccccccccccccccccccc
+3, 1
+====================
+y - 2 : <
+appli - 2
+ConsumeTotalLine - 3
+section_x : 4, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+4, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 5, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'b'
+ccccccccccccccccccccccccccccccccccc
+5, 1
+====================
+y - 2 : b
+appli - 2
+ConsumeTotalLine - 3
+section_x : 6, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'o'
+ccccccccccccccccccccccccccccccccccc
+6, 1
+====================
+y - 2 : o
+appli - 2
+ConsumeTotalLine - 3
+section_x : 7, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'t'
+ccccccccccccccccccccccccccccccccccc
+7, 1
+====================
+y - 2 : t
+appli - 2
+ConsumeTotalLine - 3
+section_x : 8, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'t'
+ccccccccccccccccccccccccccccccccccc
+8, 1
+====================
+y - 2 : t
+appli - 2
+ConsumeTotalLine - 3
+section_x : 9, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'u'
+ccccccccccccccccccccccccccccccccccc
+9, 1
+====================
+y - 2 : u
+appli - 2
+ConsumeTotalLine - 3
+section_x : 10, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'n'
+ccccccccccccccccccccccccccccccccccc
+10, 1
+====================
+y - 2 : n
+appli - 2
+ConsumeTotalLine - 3
+section_x : 11, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+11, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 12, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'>'
+ccccccccccccccccccccccccccccccccccc
+12, 1
+====================
+y - 2 : >
+appli - 2
+ConsumeTotalLine - 3
+section_x : 13, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'>'
+ccccccccccccccccccccccccccccccccccc
+13, 1
+====================
+y - 2 : >
+appli - 2
+ConsumeTotalLine - 3
+section_x : 14, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+14, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 15, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+15, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 16, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'<'
+ccccccccccccccccccccccccccccccccccc
+16, 1
+====================
+y - 2 : <
+appli - 2
+ConsumeTotalLine - 3
+section_x : 17, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'<'
+ccccccccccccccccccccccccccccccccccc
+17, 1
+====================
+y - 2 : <
+appli - 2
+ConsumeTotalLine - 3
+section_x : 18, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+18, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 19, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'b'
+ccccccccccccccccccccccccccccccccccc
+19, 1
+====================
+y - 2 : b
+appli - 2
+ConsumeTotalLine - 3
+section_x : 20, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'o'
+ccccccccccccccccccccccccccccccccccc
+20, 1
+====================
+y - 2 : o
+appli - 2
+ConsumeTotalLine - 3
+section_x : 21, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'t'
+ccccccccccccccccccccccccccccccccccc
+21, 1
+====================
+y - 2 : t
+appli - 2
+ConsumeTotalLine - 3
+section_x : 22, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'t'
+ccccccccccccccccccccccccccccccccccc
+22, 1
+====================
+y - 2 : t
+appli - 2
+ConsumeTotalLine - 3
+section_x : 23, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'u'
+ccccccccccccccccccccccccccccccccccc
+23, 1
+====================
+y - 2 : u
+appli - 2
+ConsumeTotalLine - 3
+section_x : 24, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'n'
+ccccccccccccccccccccccccccccccccccc
+24, 1
+====================
+y - 2 : n
+appli - 2
+ConsumeTotalLine - 3
+section_x : 25, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+25, 1
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 26, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'>'
+ccccccccccccccccccccccccccccccccccc
+26, 1
+====================
+y - 2 : >
+appli - 2
+ConsumeTotalLine - 3
+section_x : 27, opposed : 28ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'>'
+ccccccccccccccccccccccccccccccccccc
+27, 1
+====================
+y - 2 : >
+appli - 2
+ConsumeTotalLine - 3
+section_x : 28, opposed : 28ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+0, 5
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+5, 5
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+0, 8
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ち'
+ccccccccccccccccccccccccccccccccccc
+5, 8
+====================
+y - 2 : ち
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ば'
+ccccccccccccccccccccccccccccccccccc
+0, 11
+====================
+y - 2 : ば
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 11
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+0, 14
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+5, 14
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ち'
+ccccccccccccccccccccccccccccccccccc
+0, 17
+====================
+y - 2 : ち
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'に'
+ccccccccccccccccccccccccccccccccccc
+5, 17
+====================
+y - 2 : に
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+0, 20
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+5, 20
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+0, 23
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 23
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'に'
+ccccccccccccccccccccccccccccccccccc
+0, 26
+====================
+y - 2 : に
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 26
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+0, 29
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+5, 29
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  << bottun >>  << bottun >>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ん\\\こ\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\は\\\ち\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ば\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\こ\\\は\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ち\\\に\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ん\\\こ\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\は\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\に\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\こ\\\は\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\====================
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 0ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+0, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 1, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+1, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+2, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 3, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+3, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 4, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+4, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 5, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+5, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 6, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+6, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 7, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+7, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 8, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+8, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 9, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+9, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 10, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+10, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 11, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+11, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 12, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+12, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 13, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+13, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 14, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+14, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 15, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+15, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 16, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+16, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 17, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+17, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 18, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+18, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 19, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+19, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 20, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+20, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 21, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+21, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 22, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+22, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 23, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+23, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 24, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+24, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 25, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+25, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 26, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+26, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 27, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+27, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 28, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+28, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 29, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+29, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 30, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+30, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 31, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+31, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 32, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+32, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 33, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+33, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 34, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+34, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 35, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+35, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 36, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+36, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 37, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+37, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 38, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+38, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 39, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+39, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 40, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+40, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 41, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+41, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 42, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+42, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 43, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+43, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 44, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+44, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 45, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+45, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 46, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+46, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 47, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+47, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 48, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+48, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 49, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+49, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 50, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+50, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 51, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+51, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 52, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+52, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 53, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+53, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 54, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+54, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 55, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+55, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 56, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+56, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 57, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+57, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 58, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+58, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 59, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+59, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 60, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+60, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 61, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+61, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 62, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+62, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 63, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+63, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 64, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+64, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 65, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+65, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 66, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+66, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 67, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+67, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 68, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+68, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 69, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+69, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 70, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+70, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 71, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+71, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 72, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+72, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 73, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+73, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 74, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+74, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 75, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+75, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 76, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+76, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 77, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+77, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 78, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+78, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 79, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+79, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 80, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+80, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 81, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+81, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 82, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+82, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 83, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+83, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 84, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+84, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 85, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+85, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 86, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+86, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 87, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+87, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 88, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+88, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 89, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+89, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 90, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+90, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 91, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+91, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 92, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+92, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 93, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+93, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 94, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+94, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 95, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+95, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 96, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+96, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 97, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+97, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 98, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+98, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 99, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+99, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 100, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+100, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 101, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+101, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 102, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+102, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 103, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+103, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 104, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+104, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 105, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+105, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 106, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+106, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 107, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+107, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 108, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+108, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 109, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+109, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 110, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+110, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 111, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+111, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 112, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+112, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 113, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+113, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 114, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+114, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 115, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+115, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 116, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+116, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 117, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+117, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 118, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+118, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 119, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+119, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 120, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+120, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 121, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+121, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 122, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+122, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 123, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+123, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 124, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+124, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 125, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+125, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 126, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+126, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 127, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+127, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 128, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+128, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 129, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+129, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 130, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+130, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 131, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+131, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 132, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+132, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 133, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+133, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 134, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+134, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 135, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+135, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 136, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+136, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 137, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+137, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 138, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+138, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 139, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+139, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 140, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+140, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 141, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+141, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 142, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+142, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 143, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+143, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 144, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+144, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 145, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+145, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 146, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+146, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 147, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+147, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 148, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+148, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 149, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+149, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 150, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+150, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 151, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+151, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 152, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+152, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 153, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+153, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 154, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+154, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 155, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+155, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 156, opposed : 157ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'-'
+ccccccccccccccccccccccccccccccccccc
+156, 2
+====================
+y - 2 : -
+appli - 2
+ConsumeTotalLine - 3
+section_x : 157, opposed : 157ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+0, 5
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+5, 5
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+0, 8
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ち'
+ccccccccccccccccccccccccccccccccccc
+5, 8
+====================
+y - 2 : ち
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ば'
+ccccccccccccccccccccccccccccccccccc
+0, 11
+====================
+y - 2 : ば
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 11
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+0, 14
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+5, 14
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ち'
+ccccccccccccccccccccccccccccccccccc
+0, 17
+====================
+y - 2 : ち
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'に'
+ccccccccccccccccccccccccccccccccccc
+5, 17
+====================
+y - 2 : に
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+0, 20
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+5, 20
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+0, 23
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 23
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'に'
+ccccccccccccccccccccccccccccccccccc
+0, 26
+====================
+y - 2 : に
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+5, 26
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'こ'
+ccccccccccccccccccccccccccccccccccc
+0, 29
+====================
+y - 2 : こ
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'は'
+ccccccccccccccccccccccccccccccccccc
+5, 29
+====================
+y - 2 : は
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ん'
+ccccccccccccccccccccccccccccccccccc
+0, 32
+====================
+y - 2 : ん
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'ば'
+ccccccccccccccccccccccccccccccccccc
+5, 32
+====================
+y - 2 : ば
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'り'
+ccccccccccccccccccccccccccccccccccc
+0, 35
+====================
+y - 2 : り
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'<'
+ccccccccccccccccccccccccccccccccccc
+5, 35
+====================
+y - 2 : <
+appli - 2
+ConsumeTotalLine - 3
+section_x : 1, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'<'
+ccccccccccccccccccccccccccccccccccc
+6, 35
+====================
+y - 2 : <
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+7, 35
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 3, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'b'
+ccccccccccccccccccccccccccccccccccc
+8, 35
+====================
+y - 2 : b
+appli - 2
+ConsumeTotalLine - 3
+section_x : 4, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'o'
+ccccccccccccccccccccccccccccccccccc
+9, 35
+====================
+y - 2 : o
+appli - 2
+ConsumeTotalLine - 3
+section_x : 5, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'t'
+ccccccccccccccccccccccccccccccccccc
+10, 35
+====================
+y - 2 : t
+appli - 2
+ConsumeTotalLine - 3
+section_x : 6, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'t'
+ccccccccccccccccccccccccccccccccccc
+11, 35
+====================
+y - 2 : t
+appli - 2
+ConsumeTotalLine - 3
+section_x : 7, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'u'
+ccccccccccccccccccccccccccccccccccc
+12, 35
+====================
+y - 2 : u
+appli - 2
+ConsumeTotalLine - 3
+section_x : 8, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'n'
+ccccccccccccccccccccccccccccccccccc
+13, 35
+====================
+y - 2 : n
+appli - 2
+ConsumeTotalLine - 3
+section_x : 9, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+14, 35
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 10, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'>'
+ccccccccccccccccccccccccccccccccccc
+15, 35
+====================
+y - 2 : >
+appli - 2
+ConsumeTotalLine - 3
+section_x : 11, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+'>'
+ccccccccccccccccccccccccccccccccccc
+16, 35
+====================
+y - 2 : >
+appli - 2
+ConsumeTotalLine - 3
+section_x : 12, opposed : 13ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+Singular
+' '
+ccccccccccccccccccccccccccccccccccc
+17, 35
+====================
+y - 2 :
+appli - 2
+ConsumeTotalLine - 3
+section_x : 13, opposed : 13ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'う'
+ccccccccccccccccccccccccccccccccccc
+0, 38
+====================
+y - 2 : う
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 3
+section_x : 0, opposed : 2ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+ConsumeCharInCurrentY - 2
+skip skip
+PluralStart
+'り'
+ccccccccccccccccccccccccccccccccccc
+5, 38
+====================
+y - 2 : り
+appli - 2
+ConsumeTotalLine - 3
+section_x : 2, opposed : 2ConsumeCharInCurrentY - 1
+====================
+y - 3
+appli - 2
+appli - 3
+appli - 4
+====================
+y - 4
+appli - 0
+appli - 2
+appli - 3
+appli - 5
+ConsumeTotalLine - 1
+ConsumeTotalLine - 2
+====================
+y - 3
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ん\\\こ\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+は\\\ち\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ば\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+こ\\\は\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ち\\\に\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ん\\\こ\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+は\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+に\\\ん\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+こ\\\は\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ん\\\ば\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+り\\\<< bottun >> \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+う\\\り\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
