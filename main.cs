@@ -21,6 +21,7 @@ using NPOI.HPSF;
 using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
 using NPOI.SS.Util;
+using Org.BouncyCastle.Pqc.Crypto.Falcon;
 
 namespace src
 {
@@ -435,7 +436,7 @@ namespace src
 
     internal class CharBufferContext
     {
-        private const char space_char = ' ';
+        private const char space_char = '\\';
 
         private List<StringBuilder>? text_to_write = null;
         public Sheet? sheet_to_render { get; private set; } = null;
@@ -463,27 +464,36 @@ namespace src
         private void MakeUpTheRestOfSpaceCore(int times)
         {
             //空白埋めは色リセット状態でかかないといけない.
+            //text_to_write[Console_y].Append("<{" + times + "}");
             text_to_write[Console_y].Append(
                 colorManegementInCharBufferContext.ReturnColorStrToWriteChar(TUIColorEnum.None, TUIColorEnum.None));
             text_to_write[Console_y].Append(space_char, times);
+            //text_to_write[Console_y].Append(">");
+            Console_x += times;
         }
 
-        private void MakeUpTheRestOfSpaceForSection(int console_width)
+        //コンソールをやったかどうかを返す.
+        private bool MakeUpTheRestOfSpaceForSection(int console_width)
         {
             if (charBufferXContext.charBufferBySectionContex.section_to_render == null ||
                 Console_x + charBufferXContext.charBufferBySectionContex.section_to_render.X_span - charBufferXContext.charBufferBySectionContex.how_many_chars_did_write > console_width
                 )
             {
+                //text_to_write[Console_y].Append("*section>console");
                 MakeUpTheRestOfSpaceForConsole(console_width);
+                return true;
             }
             else
             {
+                //text_to_write[Console_y].Append("*section>core");
                 MakeUpTheRestOfSpaceCore(charBufferXContext.charBufferBySectionContex.section_to_render.X_span - charBufferXContext.charBufferBySectionContex.how_many_chars_did_write);
+                return false;
             }
         }
 
         private void MakeUpTheRestOfSpaceForConsole(int console_width)
         {
+            //text_to_write[Console_y].Append("*console>core");
             //Console.WriteLine("-------------------------------");
             //Console.WriteLine("Console_y : " + Console_y + ", Console_x : "+ Console_x + ", console_width : " + console_width);
             //Console.WriteLine("-------------------------------");
@@ -555,7 +565,11 @@ namespace src
             InitWhenSheetWasSeted();
 
             CharBufferContextResult charBufferContextResult = new CharBufferContextResult();
-            bool up_to_date = false;
+            charBufferContextResult.Make_up_the_rest_of_space = false;
+            charBufferContextResult.Go_to_next_y = true;
+            charBufferContextResult.charBufferBySectionContextResult = new();
+            charBufferContextResult.charBufferBySectionContextResult.Make_up_the_rest_of_space = false;
+            charBufferContextResult.charBufferBySectionContextResult.Go_to_next_section = true;
             Last_console_y = 0;
             Console_y = -1;
 
@@ -565,6 +579,7 @@ namespace src
                 //Console.Write(charBufferContextResult.Go_to_next_y + ", ");
 
                 //セクションごとののresult
+                Console.WriteLine("====================");
                 CharBufferBySectionContextResult? resultBySection = charBufferContextResult.charBufferBySectionContextResult;
                 if (resultBySection != null)
                 {
@@ -573,12 +588,12 @@ namespace src
                     //Console.WriteLine("y - 1");
                     if (resultBySection.stringBuilder.Length != 0)
                     {
-                        //Console.WriteLine("y - 2 : " + resultBySection.stringBuilder);
+                        Console.WriteLine("y - 2 : " + resultBySection.stringBuilder);
                         text_to_write[Console_y].Append(resultBySection.stringBuilder);
                     }
                     if (resultBySection.Make_up_the_rest_of_space)
                     {
-                        //Console.WriteLine("y - 3");
+                        Console.WriteLine("y - 3");
                         MakeUpTheRestOfSpaceForSection(console_x_length);
                     }
                 }
@@ -590,12 +605,11 @@ namespace src
                 //x全体のresult
                 if (charBufferContextResult.Make_up_the_rest_of_space)
                 {
-                    //Console.WriteLine("y - 4");
+                    Console.WriteLine("y - 4");
                     MakeUpTheRestOfSpaceForConsole(console_x_length);
                 }
 
-                up_to_date = false;
-                if (charBufferContextResult.Go_to_next_y || Console_x > console_x_length - 1 || is_first_time)
+                if (charBufferContextResult.Go_to_next_y || Console_x > console_x_length - 1)
                 {
                     //Console.WriteLine("go_to_next_line");
                     //Console.WriteLine("y - 5");
@@ -603,7 +617,6 @@ namespace src
                     while (true)
                     {
                         //Console.WriteLine("y - 6 : " + Console_y);
-                        up_to_date = true;
                         Console_y++;
                         if (Console_y > console_y_length - 1)
                         {
@@ -631,16 +644,10 @@ namespace src
                     //Console.WriteLine("y - 7");
                     break;
                 }
-
-
                 //Console.WriteLine("y - 8");
-                if (is_first_time)
-                {
-                    up_to_date = true;
-                }
 
-                charBufferContextResult = charBufferXContext.Consume(up_to_date, Console_y);
-                is_first_time = false;
+                charBufferContextResult = charBufferXContext.Consume(charBufferContextResult.Go_to_next_y, 
+                    resultBySection == null ? false : resultBySection.Go_to_next_section);
             }
 
             previous_console_x_len = console_x_length;
@@ -720,6 +727,7 @@ namespace src
         private ApplicableSectionListInLineContext applicableSectionContext;
         public CharBufferXBySectionContext charBufferBySectionContex { get; private set; }
         private CharBufferContextResult result_to_return = new();
+
         public CharBufferXContext(CharBufferContext charBufferContext, ApplicableSectionListInLineContext applicableSectionContext, CharBufferXBySectionContext charBufferBySectionContex)
         {
             this.charBufferContext = charBufferContext;
@@ -747,17 +755,17 @@ namespace src
 
         }
 
-        internal CharBufferContextResult Consume(bool do_up_tp_date_y, int? console_y = null)
+        internal CharBufferContextResult Consume(bool order_to_set_next_line, bool order_to_go_next_section)
         {
             ClearResult();
 
-            if (do_up_tp_date_y)
+            if (order_to_set_next_line)
             {
-                //Console.WriteLine("appli - 0");
+                Console.WriteLine("appli - 0");
                 ApplicableSectionResult appli_result = applicableSectionContext.ResetFromThisYLineBeggining();
                 if (appli_result.Is_end_this_line)
                 {
-                    //Console.WriteLine("appli - 1");
+                    Console.WriteLine("appli - 1");
                     return SetResult(
                         go_to_next_y: true,
                         make_up_the_rest_of_space: true,
@@ -765,61 +773,46 @@ namespace src
                 }
             }
 
-            //Console.WriteLine("appli - 2");
-            return Consume(do_up_tp_date_y);
+            Console.WriteLine("appli - 2");
+            return Consume(order_to_set_next_line || order_to_go_next_section);
         }
 
-        internal CharBufferContextResult Consume(bool be_done_up_tp_date)
+        internal CharBufferContextResult Consume(bool order_to_go_next_section)
         {
-            CharBufferBySectionContextResult charBufferBySectionContextResult = new();
+            CharBufferBySectionContextResult? charBufferBySectionContextResult;
+
             bool up_to_date = false;
             Section? section_to_render = null;
             int? section_x = null;
             int? section_y = null;
-            while (true)
+            if (order_to_go_next_section)
             {
-                if (charBufferBySectionContextResult.Go_to_next_section || be_done_up_tp_date)
+                Console.WriteLine("appli - 3");
+                ApplicableSectionResult appli_result2 = applicableSectionContext.ConsumeSection();
+                if (appli_result2.Is_end_this_line)
                 {
-                    //Console.WriteLine("appli - 3");
-                    ApplicableSectionResult appli_result2 = applicableSectionContext.ConsumeSection();
-                    if (appli_result2.Is_end_this_line)
-                    {
-                        //Console.WriteLine("appli - 4");
-                        return SetResult(
-                            go_to_next_y: true,
-                            make_up_the_rest_of_space: true,
-                            result: null);
-                    }
-                    else
-                    {
-                        //Console.WriteLine("appli - 5");
-                        up_to_date = true;
-                        section_to_render = charBufferContext.sheet_to_render.GetSection(appli_result2.sectionInfoInLine.section_serial_num);
-                        section_y = section_to_render.Page_starting_y_pos + appli_result2.sectionInfoInLine.line_serial;
-                        section_x = section_to_render.Page_starting_x_pos;
-                    }
-                }
-
-                charBufferBySectionContextResult = charBufferBySectionContex.Consume(up_to_date, section_to_render, section_x, section_y);
-                if (!charBufferBySectionContextResult.Go_to_next_section)
-                {
-                    //Console.WriteLine("appli - 6");
-                    if (charBufferBySectionContextResult != null)
-                    {
-                        //Console.WriteLine(charBufferBySectionContextResult.stringBuilder);
-                        //Console.WriteLine(charBufferBySectionContextResult.Go_to_next_section);
-                        //Console.WriteLine(charBufferBySectionContextResult.Make_up_the_rest_of_space);
-                    }
-                    else
-                    {
-                        //Console.WriteLine("null");
-                    }
+                    Console.WriteLine("appli - 4");
                     return SetResult(
-                    go_to_next_y: false,
-                    make_up_the_rest_of_space: false,
-                    result: charBufferBySectionContextResult);
+                        go_to_next_y: true,
+                        make_up_the_rest_of_space: true,
+                        result: null);
+
+                }
+                else
+                {
+                    Console.WriteLine("appli - 5");
+                    up_to_date = true;
+                    section_to_render = charBufferContext.sheet_to_render.GetSection(appli_result2.sectionInfoInLine.section_serial_num);
+                    section_y = section_to_render.Page_starting_y_pos + appli_result2.sectionInfoInLine.line_serial;
+                    section_x = section_to_render.Page_starting_x_pos;
                 }
             }
+
+            charBufferBySectionContextResult = charBufferBySectionContex.Consume(up_to_date, section_to_render, section_x, section_y);
+            return SetResult(
+                go_to_next_y: false,
+                make_up_the_rest_of_space: false,
+                result: charBufferBySectionContextResult);
         }
     }
 
@@ -865,6 +858,7 @@ namespace src
             result.stringBuilder.Clear();
         }
 
+        //チェーンメソッドでresult.sbにappendできるように戻り値で返す.引数で入れてたらstringの確保とか、stringbuilderで入れても
         private StringBuilder SetResult(bool go_to_next_section = false, bool make_up_the_rest_of_space = false)
         {
             result.Go_to_next_section = go_to_next_section;
@@ -890,18 +884,19 @@ namespace src
             return Max_layar_length_in_section;
         }
 
-        internal CharBufferBySectionContextResult Consume(bool do_up_tp_date_section, Section? section = null, int? section_x = null, int? section_y = null)
+        internal CharBufferBySectionContextResult Consume(bool do_set_new_section, Section? section = null, int? section_x = null, int? section_y = null)
         {
             ClearResult();
-            if (do_up_tp_date_section)
+            if (do_set_new_section)
             {
-                //Console.WriteLine("ConsumeTotalLine - 1");
+                Console.WriteLine("ConsumeTotalLine - 1");
+                how_many_chars_did_write = 0;
                 section_to_render = section;
                 Section_x = (int)section_x;
                 Section_y = (int)section_y;
                 if (Section_y > section_to_render.Total_writed_line_count - 1)
                 {
-                    //Console.WriteLine("ConsumeTotalLine - 2");
+                    Console.WriteLine("ConsumeTotalLine - 2");
                     SetResult(go_to_next_section: true, make_up_the_rest_of_space: true);
                     return result;
                 }
@@ -911,20 +906,20 @@ namespace src
                 }
             }
 
-            //Console.WriteLine("ConsumeTotalLine - 3");
+            Console.WriteLine("ConsumeTotalLine - 3");
             return ConsumeCharInCurrentY();
         }
 
         private CharBufferBySectionContextResult ConsumeCharInCurrentY()
         {
             //Console.WriteLine("ConsumeCharInCurrentY - 1");
-            //Console.Write("section_x : " + Section_x);
-            //Console.Write(", opposed : " + section_to_render.Length_in_English_List[Section_y]);
+            Console.Write("section_x : " + Section_x);
+            Console.Write(", opposed : " + section_to_render.Length_in_English_List[Section_y]);
 
             if (Section_x > Max_layar_length_in_section - 1)
             {
                 //Console.WriteLine("consume char in current y");
-                //Console.WriteLine("ConsumeCharInCurrentY - 1");
+                Console.WriteLine("ConsumeCharInCurrentY - 1");
 
                 SetResult(
                     go_to_next_section: true,
@@ -939,7 +934,7 @@ namespace src
             //後ろからlayerを回す.
             for (int i = 0, layer_index = section_to_render.layers.Count - 1; i < section_to_render.layers.Count; i++, layer_index--)
             {
-                //Console.WriteLine("ConsumeCharInCurrentY - 2");
+                Console.WriteLine("ConsumeCharInCurrentY - 2");
 
                 layer = section_to_render.GetSectionLayer(layer_index);
 
@@ -951,16 +946,16 @@ namespace src
                     continue;
                 }
 
-                //Console.WriteLine("skip skip");
+                Console.WriteLine("skip skip");
 
                 sectionCharInfo = layer.texts_info[Section_y].char_info_list[Section_x];
                 charType = sectionCharInfo.type;
 
-                //Console.WriteLine(sectionCharInfo.type);
-                //Console.WriteLine("\'" + sectionCharInfo.charactor + "\'");
+                Console.WriteLine(sectionCharInfo.type);
+                Console.WriteLine("\'" + sectionCharInfo.charactor + "\'");
 
-                //Console.WriteLine("==================================");
-                //Console.WriteLine(charBufferContext.Console_x + ", " + charBufferContext.Console_y);
+                Console.WriteLine("ccccccccccccccccccccccccccccccccccc");
+                Console.WriteLine(charBufferContext.Console_x + ", " + charBufferContext.Console_y);
                 switch (charType)
                 {
                     case CharType.Empty:
@@ -1157,7 +1152,7 @@ namespace src
                 }
             }
 
-            Console.SetCursorPosition(0, 0);
+            //Console.SetCursorPosition(0, 0);
             Console.Write(fainal_sb_to_write);
         }
     }
@@ -1294,6 +1289,7 @@ namespace src
         }
     }
 
+    //つられて強制ページ遷移をつくる.
     internal class Section
     {
         public int serial_number { get; set; }
@@ -1375,6 +1371,14 @@ namespace src
                 Thread.Sleep(30);
             }
         }
+
+        internal void AddSectionToForcePageUp(params Section[] sections)
+        {
+
+        }
+
+
+        
         public void UpPage(bool for_key)
         {
             //Console.WriteLine("up");
