@@ -1,27 +1,28 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO.Pipes;
 using System.Numerics;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;
-using Array = System.Array;
-using Org.BouncyCastle.Bcpg.Sig;
-using static System.Collections.Specialized.BitVector32;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using ICSharpCode.SharpZipLib.Zip;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
-using NPOI.SS.Formula.Functions;
-using NPOI.OpenXmlFormats.Spreadsheet;
-using System.Windows.Forms;
-using static NPOI.HSSF.Util.HSSFColor;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using ICSharpCode.SharpZipLib.Zip;
 using NPOI.HPSF;
-using System.Collections.Generic;
-using static System.Net.Mime.MediaTypeNames;
+using NPOI.OpenXmlFormats.Spreadsheet;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.Util;
+using Org.BouncyCastle.Bcpg.Sig;
 using Org.BouncyCastle.Pqc.Crypto.Falcon;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using static System.Collections.Specialized.BitVector32;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static NPOI.HSSF.Util.HSSFColor;
+using Array = System.Array;
 
 namespace src
 {
@@ -436,7 +437,7 @@ namespace src
 
     internal class CharBufferContext
     {
-        private const char space_char = '\\';
+        private const char space_char = ' ';
 
         private List<StringBuilder>? text_to_write = null;
         public Sheet? sheet_to_render { get; private set; } = null;
@@ -467,9 +468,12 @@ namespace src
             //text_to_write[Console_y].Append("<{" + times + "}");
             text_to_write[Console_y].Append(
                 colorManegementInCharBufferContext.ReturnColorStrToWriteChar(TUIColorEnum.None, TUIColorEnum.None));
-            text_to_write[Console_y].Append(space_char, times);
-            //text_to_write[Console_y].Append(">");
-            Console_x += times;
+            if (times >= 0)
+            {
+                text_to_write[Console_y].Append(space_char, times);
+                //text_to_write[Console_y].Append(">");
+                Console_x += times;
+            }
         }
 
         //コンソールをやったかどうかを返す.
@@ -575,11 +579,10 @@ namespace src
 
             while (true)
             {
-                //Console.WriteLine("console : " + Console_x + ", " + Console_y);
-                //Console.Write(charBufferContextResult.Go_to_next_y + ", ");
-
                 //セクションごとののresult
-                Console.WriteLine("====================");
+                //Console.WriteLine("====================");
+                //Console.WriteLine("console : " + Console_x + ", " + Console_y + ", " + console_x_length);
+
                 CharBufferBySectionContextResult? resultBySection = charBufferContextResult.charBufferBySectionContextResult;
                 if (resultBySection != null)
                 {
@@ -588,12 +591,13 @@ namespace src
                     //Console.WriteLine("y - 1");
                     if (resultBySection.stringBuilder.Length != 0)
                     {
-                        Console.WriteLine("y - 2 : " + resultBySection.stringBuilder);
+                        //Console.WriteLine("y - 2 : " + resultBySection.stringBuilder);
+                        //Console.WriteLine(resultBySection.stringBuilder);
                         text_to_write[Console_y].Append(resultBySection.stringBuilder);
                     }
                     if (resultBySection.Make_up_the_rest_of_space)
                     {
-                        Console.WriteLine("y - 3");
+                        //Console.WriteLine("y - 3");
                         MakeUpTheRestOfSpaceForSection(console_x_length);
                     }
                 }
@@ -605,11 +609,16 @@ namespace src
                 //x全体のresult
                 if (charBufferContextResult.Make_up_the_rest_of_space)
                 {
-                    Console.WriteLine("y - 4");
+                    //Console.WriteLine("y - 4");
                     MakeUpTheRestOfSpaceForConsole(console_x_length);
                 }
 
-                if (charBufferContextResult.Go_to_next_y || Console_x > console_x_length - 1)
+                if (Console_x > console_x_length - 1)
+                {
+                    //Console.WriteLine("console_x is over!!!!!");
+                    charBufferContextResult.Go_to_next_y = true;
+                }
+                if (charBufferContextResult.Go_to_next_y)
                 {
                     //Console.WriteLine("go_to_next_line");
                     //Console.WriteLine("y - 5");
@@ -630,7 +639,6 @@ namespace src
                         if (console_len_is_changed || false == IsNoSectionChangedInALine(Console_y, console_y_length))
                         {
                             //Console.WriteLine("clearing");
-
                             text_to_write[Console_y].Clear();
                             Last_console_y = Console_y;
                             break;
@@ -706,6 +714,11 @@ namespace src
             {
                 result_in_aline.sectionInfoInLine = applicableSectionListInLine.SectionLists[charBufferContext.Console_y][applicable_sections_index];
                 result_in_aline.Is_end_this_line = false;
+                //Console.WriteLine("((((((((((((((((((");
+                //Console.WriteLine(charBufferContext.Console_y);
+                //Console.WriteLine(applicableSectionListInLine.SectionLists[charBufferContext.Console_y].Count);
+                //Console.WriteLine(result_in_aline.sectionInfoInLine.section_serial_num);
+                //Console.WriteLine("((((((((((((((((((");
             }
 
             applicable_sections_index++;
@@ -761,11 +774,11 @@ namespace src
 
             if (order_to_set_next_line)
             {
-                Console.WriteLine("appli - 0");
+                //Console.WriteLine("appli - 0");
                 ApplicableSectionResult appli_result = applicableSectionContext.ResetFromThisYLineBeggining();
                 if (appli_result.Is_end_this_line)
                 {
-                    Console.WriteLine("appli - 1");
+                    //Console.WriteLine("appli - 1");
                     return SetResult(
                         go_to_next_y: true,
                         make_up_the_rest_of_space: true,
@@ -773,7 +786,7 @@ namespace src
                 }
             }
 
-            Console.WriteLine("appli - 2");
+            //Console.WriteLine("appli - 2");
             return Consume(order_to_set_next_line || order_to_go_next_section);
         }
 
@@ -787,11 +800,11 @@ namespace src
             int? section_y = null;
             if (order_to_go_next_section)
             {
-                Console.WriteLine("appli - 3");
+                //Console.WriteLine("appli - 3");
                 ApplicableSectionResult appli_result2 = applicableSectionContext.ConsumeSection();
                 if (appli_result2.Is_end_this_line)
                 {
-                    Console.WriteLine("appli - 4");
+                    //Console.WriteLine("appli - 4");
                     return SetResult(
                         go_to_next_y: true,
                         make_up_the_rest_of_space: true,
@@ -800,7 +813,7 @@ namespace src
                 }
                 else
                 {
-                    Console.WriteLine("appli - 5");
+                    //Console.WriteLine("appli - 5");
                     up_to_date = true;
                     section_to_render = charBufferContext.sheet_to_render.GetSection(appli_result2.sectionInfoInLine.section_serial_num);
                     section_y = section_to_render.Page_starting_y_pos + appli_result2.sectionInfoInLine.line_serial;
@@ -889,14 +902,14 @@ namespace src
             ClearResult();
             if (do_set_new_section)
             {
-                Console.WriteLine("ConsumeTotalLine - 1");
+                //Console.WriteLine("ConsumeTotalLine - 1 : " + section.Total_writed_line_count + "," + section.serial_number);
                 how_many_chars_did_write = 0;
                 section_to_render = section;
                 Section_x = (int)section_x;
                 Section_y = (int)section_y;
                 if (Section_y > section_to_render.Total_writed_line_count - 1)
                 {
-                    Console.WriteLine("ConsumeTotalLine - 2");
+                    //Console.WriteLine("ConsumeTotalLine - 2");
                     SetResult(go_to_next_section: true, make_up_the_rest_of_space: true);
                     return result;
                 }
@@ -906,20 +919,70 @@ namespace src
                 }
             }
 
-            Console.WriteLine("ConsumeTotalLine - 3");
+            //Console.WriteLine("ConsumeTotalLine - 3");
             return ConsumeCharInCurrentY();
+        }
+
+        private int? LayerIndexOfOneProceedWritedChar()
+        {
+            int? return_int = null;
+            int section_x = Section_x + 1;
+
+            if (section_x > Max_layar_length_in_section - 1)
+            {
+                return return_int;
+            }
+
+            SectionLayer layer;
+            CharType charType;
+            SectionCharInfo sectionCharInfo;
+
+            for (int i = 0, layer_index = section_to_render.layers.Count - 1; i < section_to_render.layers.Count; i++, layer_index--)
+            {
+                layer = section_to_render.GetSectionLayer(layer_index);
+
+                if (Section_y > layer.Total_writed_line_count - 1 || section_x > layer.texts_info[Section_y].length_in_English - 1)
+                {
+                    continue;
+                }
+
+                sectionCharInfo = layer.texts_info[Section_y].char_info_list[section_x];
+                charType = sectionCharInfo.type;
+
+                switch (charType)
+                {
+                    case CharType.Empty:
+                        continue;
+
+                    case CharType.Singular:
+                    case CharType.PluralStart:
+                    case CharType.PluralEnd:
+                        return_int = layer_index;
+                        goto break_stmt;
+
+                    default:
+                        break;
+                }
+            }
+        break_stmt:
+
+            return return_int;
         }
 
         private CharBufferBySectionContextResult ConsumeCharInCurrentY()
         {
             //Console.WriteLine("ConsumeCharInCurrentY - 1");
-            Console.Write("section_x : " + Section_x);
-            Console.Write(", opposed : " + section_to_render.Length_in_English_List[Section_y]);
+            //Console.WriteLine(section_to_render.serial_number);
+            //Console.WriteLine(section_to_render.Page_starting_x_pos);
+
+
+            //Console.Write("section_x : " + Section_x);
+            //Console.WriteLine(", opposed : " + Max_layar_length_in_section);
 
             if (Section_x > Max_layar_length_in_section - 1)
             {
                 //Console.WriteLine("consume char in current y");
-                Console.WriteLine("ConsumeCharInCurrentY - 1");
+                //Console.WriteLine("ConsumeCharInCurrentY - 1.1");
 
                 SetResult(
                     go_to_next_section: true,
@@ -931,48 +994,50 @@ namespace src
             CharType charType;
             SectionCharInfo sectionCharInfo;
 
+            bool all_is_empty = true;
             //後ろからlayerを回す.
             for (int i = 0, layer_index = section_to_render.layers.Count - 1; i < section_to_render.layers.Count; i++, layer_index--)
             {
-                Console.WriteLine("ConsumeCharInCurrentY - 2");
+                //Console.WriteLine("ConsumeCharInCurrentY - 2");
+                //Console.WriteLine(layer_index);
 
                 layer = section_to_render.GetSectionLayer(layer_index);
 
                 //このlayerにx, yに文字がなかったら(lengthからオーバーしてたら)continu(section.section_layer.texts_infoのインデックスアクセスの安全装置)
                 //必ず少なくとも一つのlayerに文字がある(上のifがあることによって範囲内のx, yしか受け付けないから)
+                //Console.WriteLine(Section_y);
+                //Console.WriteLine((layer.Total_writed_line_count - 1));
+                //if (!(Section_y > layer.Total_writed_line_count - 1))
+                //{
+                //    Console.WriteLine(Section_x);
+                //      Console.WriteLine((layer.texts_info[Section_y].length_in_English - 1));
+                //}
                 if (Section_y > layer.Total_writed_line_count - 1 || Section_x > layer.texts_info[Section_y].length_in_English - 1)
                 {
                     //Console.WriteLine("skip layer for");
                     continue;
                 }
 
-                Console.WriteLine("skip skip");
+                //Console.WriteLine("skip skip");
 
                 sectionCharInfo = layer.texts_info[Section_y].char_info_list[Section_x];
                 charType = sectionCharInfo.type;
 
-                Console.WriteLine(sectionCharInfo.type);
-                Console.WriteLine("\'" + sectionCharInfo.charactor + "\'");
+                //Console.WriteLine(sectionCharInfo.type);
+                //Console.WriteLine("\'" + sectionCharInfo.charactor + "\'");
 
-                Console.WriteLine("ccccccccccccccccccccccccccccccccccc");
-                Console.WriteLine(charBufferContext.Console_x + ", " + charBufferContext.Console_y);
+                //Console.WriteLine("ccccccccccccccccccccccccccccccccccc");
+                //Console.WriteLine(charBufferContext.Console_x + ", " + charBufferContext.Console_y);
                 switch (charType)
                 {
                     case CharType.Empty:
-                        if (layer_index == 0)
-                        {
-                            SetResult().Append(
-                                colorManegementInCharBufferContext.ReturnColorStrToWriteOneSpace());
-
-                            result.stringBuilder.Append(' ');
-
-                            Section_x++;
-                            charBufferContext.Console_x++;
-                            how_many_chars_did_write++;
-                        }
+                        //Console.WriteLine("c - 1");
                         continue;
 
                     case CharType.Singular:
+                        //Console.WriteLine("c - 2");
+                        all_is_empty = false;
+
                         SetResult().Append(
                             colorManegementInCharBufferContext.ReturnColorStrToWriteChar(sectionCharInfo.color_arg1, sectionCharInfo.color_arg2)
                         );
@@ -983,20 +1048,44 @@ namespace src
                         Section_x++;
                         charBufferContext.Console_x++;
                         how_many_chars_did_write++;
-                        break;
+                        goto break_for_stmt_of_layer;
 
                     case CharType.PluralStart:
-                        if (Section_x + 1 > section_to_render.Page_starting_x_pos + section_to_render.X_span)
+                        //Console.WriteLine("c - 3");
+                        all_is_empty = false;
+
+                        //Console.WriteLine("c - 4");
+                        int? next_layer_index = LayerIndexOfOneProceedWritedChar();
+                        //Console.WriteLine(next_layer_index == null ? next_layer_index.ToString() : "null");
+                        if (next_layer_index != null && next_layer_index > layer_index)
                         {
+                            //Console.WriteLine("c - 5");
+                            SetResult().Append(
+                                colorManegementInCharBufferContext.ReturnColorStrToWriteChar(sectionCharInfo.color_arg1, sectionCharInfo.color_arg2)
+                            );
+
+                            SetResult().Append(' ');
+
+                            Section_x++;
+                            charBufferContext.Console_x++;
+                            how_many_chars_did_write++;
+                        }
+                        else if (Section_x + 1 > section_to_render.Page_starting_x_pos + section_to_render.X_span - 1)
+                        {
+                            //Console.WriteLine("c - 6");
                             SetResult().Append(
                                 colorManegementInCharBufferContext.ReturnColorStrToWriteOneSpace());
 
                             SetResult().Append(' ');
 
-                            Section_x++;
+                            Section_x += 2;
+                            charBufferContext.Console_x++;
+                            how_many_chars_did_write++;
                         }
                         else
                         {
+                            //Console.WriteLine("c - 7");
+                            //Console.WriteLine(Section_x);
                             //    い.
                             //   あ
                             SetResult().Append(
@@ -1006,14 +1095,45 @@ namespace src
 
                             Section_x += 2;
                             charBufferContext.Console_x += 2;
+                            //Console.WriteLine(Section_x);
                             how_many_chars_did_write += 2;
+                            goto break_for_stmt_of_layer;
                         }
-                        break;
+                        goto break_for_stmt_of_layer;
+
+                    case CharType.PluralEnd:
+                        //Console.WriteLine("c - 8");
+                        all_is_empty = false;
+
+                        SetResult().Append(
+                                colorManegementInCharBufferContext.ReturnColorStrToWriteOneSpace());
+
+                        SetResult().Append(' ');
+
+                        Section_x++;
+                        charBufferContext.Console_x++;
+                        how_many_chars_did_write++;
+                        goto break_for_stmt_of_layer;
 
                     default:
+                        //Console.WriteLine("c - 9");
                         //Console.WriteLine("default \'" + sectionCharInfo.charactor + "\'");
                         break;
                 }
+            }
+
+        break_for_stmt_of_layer:
+            if (all_is_empty)
+            {
+                //Console.WriteLine("all_is_empty");
+                SetResult().Append(
+                    colorManegementInCharBufferContext.ReturnColorStrToWriteOneSpace());
+
+                result.stringBuilder.Append(' ');
+
+                Section_x++;
+                charBufferContext.Console_x++;
+                how_many_chars_did_write++;
             }
 
             return result;
@@ -1152,7 +1272,7 @@ namespace src
                 }
             }
 
-            //Console.SetCursorPosition(0, 0);
+            Console.SetCursorPosition(0, 0);
             Console.Write(fainal_sb_to_write);
         }
     }
@@ -1267,15 +1387,25 @@ namespace src
                 list.Clear();
             }
 
+            //Console.WriteLine("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             foreach (var each in serial_and_xpos)
             {
                 int serial_num = each.serial_num;
-                for (int i = sections[serial_num].Y_pos, line_serial = 0; i < applicableSectionListinLine.SectionLists.Count; i++)
+                int line_serial = 0;
+                int console_y = sections[serial_num].Y_pos;
+                //Console.WriteLine(line_serial);
+                //Console.WriteLine(sections[serial_num].Y_span);
+                //Console.WriteLine(console_y);
+                //Console.WriteLine(applicableSectionListinLine.SectionLists.Count);
+                //Console.WriteLine("$$");
+                while (line_serial < sections[serial_num].Y_span && console_y < applicableSectionListinLine.SectionLists.Count)
                 {
-                    applicableSectionListinLine.SectionLists[i].Add(new SectionInfoInLine(serial_num, line_serial));
+                    applicableSectionListinLine.SectionLists[console_y].Add(new SectionInfoInLine(serial_num, line_serial));
                     line_serial++;
+                    console_y++;
                 }
             }
+            //Console.WriteLine("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
         }
 
         public Section GetSection(int inndex)
@@ -1290,6 +1420,14 @@ namespace src
     }
 
     //つられて強制ページ遷移をつくる.
+    internal enum SectionPageDirectionToindex
+    {
+        up,
+        donw,
+        left_slide,
+        right_slide
+    }
+
     internal class Section
     {
         public int serial_number { get; set; }
@@ -1308,6 +1446,10 @@ namespace src
         public int Whole_Length_in_English { get; set; } = 0;
         public List<int> Length_in_English_List { get; set; } = new List<int>();
         private int section_layer_serial_num = 0;
+        private List<Section> section_list_to_force_page_up = new List<Section>();
+        private List<Section> section_list_to_force_page_down = new List<Section>();
+        private List<Section> section_list_to_force_page_left_slide = new List<Section>();
+        private List<Section> section_list_to_force_page_right_slide = new List<Section>();
 
         public List<SectionLayer> layers { get; set; }
         private IKeyEvent keyEvent;
@@ -1319,7 +1461,7 @@ namespace src
             this.parent_sheet = parent_sheet;
         }
 
-        public void SetXYPosAndSpan(int? x_pos = null, int? y_pos = null, int? x_span = null, int? y_span = null)
+        public void SetXYPosAndSpan(int? x_pos = null, int? x_span = null, int? y_pos = null, int? y_span = null)
         {
             X_pos = x_pos ?? X_pos;
             Y_pos = y_pos ?? Y_pos;
@@ -1372,11 +1514,72 @@ namespace src
             }
         }
 
-        internal void AddSectionToForcePageUp(params Section[] sections)
+        internal void ClearSectionListToForcePage(SectionPageDirectionToindex sec_index)
         {
-
+            DicForSection(sec_index).Clear();
         }
 
+        internal void AllClearSectionListToForcePage()
+        {
+            int direction_num = 4;
+            for (int i = 0; i < direction_num; i++)
+            {
+                DicForSection((SectionPageDirectionToindex)i).Clear();
+            }
+        }
+
+        internal void AddSectionToForcePageMoving(SectionPageDirectionToindex sec_index, params Section[] sections)
+        {
+            foreach (Section section in sections)
+            {
+                DicForSection(sec_index).Add(section);
+            }
+        }
+
+        private List<Section>? DicForSection(SectionPageDirectionToindex sec_index)
+        {
+            switch (sec_index)
+            {
+                case SectionPageDirectionToindex.up:
+                    return section_list_to_force_page_up;
+
+                case SectionPageDirectionToindex.donw:
+                    return section_list_to_force_page_down;
+
+                case SectionPageDirectionToindex.left_slide:
+                    return section_list_to_force_page_left_slide;
+
+                case SectionPageDirectionToindex.right_slide:
+                    return section_list_to_force_page_right_slide;
+
+                default:
+                    return null;
+            }
+        }
+
+        private void ForcePageMoving(List<Section> sections, bool to_x)
+        {
+            foreach(Section section in sections)
+            {
+                section.Page_pos_is_changed = true;
+                if (to_x)
+                {
+                    section.Page_starting_x_pos = Page_starting_x_pos;
+                }
+                else
+                {
+                    section.Page_starting_y_pos = Page_starting_y_pos;
+                }
+            }
+        }
+
+        private void ForcePageMovingSetIsChangedFalse(List<Section> sections)
+        {
+            foreach (Section section in sections)
+            {
+                section.Page_pos_is_changed = false;
+            }
+        }
 
         
         public void UpPage(bool for_key)
@@ -1395,14 +1598,20 @@ namespace src
             if (previous_page_y != Page_starting_y_pos)
             {
                 Page_pos_is_changed = true;
+                ForcePageMoving(section_list_to_force_page_up, to_x: false);
+
                 if (for_key && Page_pos_is_changed)
                 {
                     parent_sheet.parents_render_class.RenderingOnConsole();
+
                     Page_pos_is_changed = false;
+                    ForcePageMovingSetIsChangedFalse(section_list_to_force_page_up);
+
                     Wait();
                 }
             }
         }
+
         public void DownPage(bool for_key)
         {
             //Console.WriteLine("down");
@@ -1416,14 +1625,20 @@ namespace src
             if (previous_page_y != Page_starting_y_pos)
             {
                 Page_pos_is_changed = true;
+                ForcePageMoving(section_list_to_force_page_down, to_x: false);
+
                 if (for_key && Page_pos_is_changed)
                 {
                     parent_sheet.parents_render_class.RenderingOnConsole();
+
                     Page_pos_is_changed = false;
+                    ForcePageMovingSetIsChangedFalse(section_list_to_force_page_down);
+
                     Wait();
                 }
             }
         }
+
         public void LeftSlidePage(bool for_key)
         {
             int previous_x_pos = Page_starting_x_pos;
@@ -1439,10 +1654,15 @@ namespace src
             if (previous_x_pos != Page_starting_x_pos)
             {
                 Page_pos_is_changed = true;
+                ForcePageMoving(section_list_to_force_page_left_slide, to_x: true);
+
                 if (for_key && Page_pos_is_changed)
                 {
                     parent_sheet.parents_render_class.RenderingOnConsole();
+
                     Page_pos_is_changed = false;
+                    ForcePageMovingSetIsChangedFalse(section_list_to_force_page_left_slide);
+
                     Wait();
                 }
             }
@@ -1450,19 +1670,31 @@ namespace src
         public void RightSlidePage(bool for_key)
         {
             int previous_x_pos = Page_starting_x_pos;
-            Page_starting_x_pos += X_span;
-            if (Page_starting_x_pos > Whole_Length_in_English)
+            if (Page_starting_x_pos + X_span > Whole_Length_in_English)
             {
-                Page_starting_x_pos = Whole_Length_in_English - X_span;
+                Page_starting_x_pos = 0;
+            }
+            else
+            {
+                Page_starting_x_pos += X_span;
+                if (Page_starting_x_pos + X_span > Whole_Length_in_English)
+                {
+                    Page_starting_x_pos = Whole_Length_in_English - X_span;
+                }
             }
 
             if (previous_x_pos != Page_starting_x_pos)
             {
                 Page_pos_is_changed = true;
+                ForcePageMoving(section_list_to_force_page_right_slide, to_x: true);
+
                 if (for_key && Page_pos_is_changed)
                 {
                     parent_sheet.parents_render_class.RenderingOnConsole();
+
                     Page_pos_is_changed = false;
+                    ForcePageMovingSetIsChangedFalse(section_list_to_force_page_right_slide);
+
                     Wait();
                 }
             }
@@ -1721,6 +1953,7 @@ namespace src
         public void FixX()
         {
             is_fix_current_x = true;
+            fix_x_into = current_x;
         }
 
         public void UnFixX()
@@ -1745,9 +1978,38 @@ namespace src
                 return SimpleCharType.English;
             }
             else if (
+                // CJK Symbols and Punctuation
+                (uint)(c - '\u3000') <= '\u303F' - '\u3000' ||
+
+                // Hiragana
                 (uint)(c - '\u3040') <= '\u309F' - '\u3040' ||
+
+                // Katakana
                 (uint)(c - '\u30A0') <= '\u30FF' - '\u30A0' ||
-                (uint)(c - '\u4E00') <= '\u9FFF' - '\u4E00') //日本語
+
+                // Katakana Phonetic Extensions
+                (uint)(c - '\u31F0') <= '\u31FF' - '\u31F0' ||
+
+                // CJK Unified Ideographs Extension A
+                (uint)(c - '\u3400') <= '\u4DBF' - '\u3400' ||
+
+                // CJK Unified Ideographs
+                (uint)(c - '\u4E00') <= '\u9FFF' - '\u4E00' ||
+
+                // Hangul Jamo
+                (uint)(c - '\u1100') <= '\u11FF' - '\u1100' ||
+
+                // Hangul Compatibility Jamo
+                (uint)(c - '\u3130') <= '\u318F' - '\u3130' ||
+
+                // Hangul Syllables
+                (uint)(c - '\uAC00') <= '\uD7AF' - '\uAC00' ||
+
+                // Fullwidth Forms
+                (uint)(c - '\uFF01') <= '\uFF60' - '\uFF01' ||
+
+                // Fullwidth symbol area
+                (uint)(c - '\uFFE0') <= '\uFFE6' - '\uFFE0')
             {
                 return SimpleCharType.Japanese;
             }
@@ -1862,7 +2124,7 @@ namespace src
         private void SetCurrentXandYForWriteLineFn()
         {
             current_y++;
-            if (is_fix_current_x)
+            if (!is_fix_current_x)
             {
                 current_x = 0;
             }
@@ -2674,6 +2936,59 @@ namespace src
             {
                 return "";
             }
+        }
+    }
+
+    internal class LogText
+    {
+        public string msg = "";
+        public int index = -1;
+    } 
+
+    internal class LogBox
+    {
+        private List<LogText> logTextList;
+        private int y_lenght;
+        private SectionLayer layer;
+        public LogBox(int y_lenght, SectionLayer layer)
+        {
+            this.y_lenght = y_lenght;
+            logTextList = new List<LogText>(y_lenght);
+            logTextList.Add(new LogText());
+            this.layer = layer;
+        }
+
+        public void WriteMsg(string msg)
+        {
+            bool writed = false;
+            foreach(LogText logText in logTextList)
+            {
+                if (!writed && (logText.index == -1 || logText.index == y_lenght - 1))
+                {
+                    Console.WriteLine("hahahahahah");
+                    logText.msg = msg;
+                    logText.index = 0;
+                    writed = true;
+                }
+                else
+                {
+                    Console.WriteLine("hihihihihih");
+                    logText.index++;
+                }
+            }
+        }
+
+        internal void WriteLineMsgsOnLayer(int start_x, int start_y)
+        {
+            foreach (LogText logText in logTextList)
+            {
+                if (logText.index != -1)
+                {
+                    layer.SetCursolPos(start_x, start_y + logText.index);
+                    layer.Write(logText.msg);
+                }
+            }
+            layer.SetCursolPos(start_x, start_y + y_lenght);
         }
     }
 }
